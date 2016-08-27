@@ -22,6 +22,7 @@ import org.apache.commons.math3.analysis.differentiation.FiniteDifferencesDiffer
 import org.apache.commons.math3.analysis.differentiation.UnivariateDifferentiableFunction;
 import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
+import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 
@@ -36,6 +37,7 @@ public class Lrp extends Rectangle implements OCTOverlay {
     private boolean display = false;
     private static final Oct oct = Oct.getInstance();
     private final int lrpCenterXPosition;
+    private List<XYPointerAnnotation> annotations = new LinkedList<>();
 
     public Lrp(String title, int x, int width, int height, LrpType type) {
         super(x - ((width - 1) / 2), (oct.getImageHeight() / 2) - (height / 2), width, height);
@@ -355,6 +357,14 @@ public class Lrp extends Rectangle implements OCTOverlay {
 
     public int getLrpCenterXPosition() {
         return lrpCenterXPosition;
+    }
+
+    public List<XYPointerAnnotation> getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(List<XYPointerAnnotation> annotations) {
+        this.annotations = annotations;
     }
 
 }

@@ -31,7 +31,6 @@ import javax.swing.event.ListSelectionEvent;
  */
 public class OCTDisplayPanel extends JLabel {
 
-    private final HashMap<String, OCTOverlay> dispLayerMap;
     private final Oct oct = Oct.getInstance();
     private final DisplaySettings dispSettings = Models.getInstance().getDisplaySettings();
     private final OctSettings octSettings = Models.getInstance().getOctSettings();
@@ -42,7 +41,6 @@ public class OCTDisplayPanel extends JLabel {
     private transient final ChangeSupport changeSupport = new ChangeSupport(this);
 
     private OCTDisplayPanel() {
-        this.dispLayerMap = new HashMap<>();
         setAlignmentX(CENTER_ALIGNMENT);
 
         //register listener for changes to Oct for auto update on change
@@ -106,24 +104,6 @@ public class OCTDisplayPanel extends JLabel {
     private static class OCTDisplayPanelHolder {
 
         private static final OCTDisplayPanel INSTANCE = new OCTDisplayPanel();
-    }
-
-    public void addOverlay(OCTOverlay overlay) {
-        dispLayerMap.put(overlay.getName(), overlay);
-    }
-
-    public void removeOverlay(OCTOverlay overlay) {
-        removeOverlay(overlay.getName());
-    }
-
-    public void removeOverlay(String overlayName) {
-        if (dispLayerMap.containsKey(overlayName)) {
-            dispLayerMap.remove(overlayName);
-        }
-    }
-
-    public Set<String> listOverlayNames() {
-        return dispLayerMap.keySet();
     }
 
     private void updateDisplay() {

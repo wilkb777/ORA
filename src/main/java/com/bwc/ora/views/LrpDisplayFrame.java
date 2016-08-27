@@ -175,7 +175,7 @@ public class LrpDisplayFrame extends JFrame {
                         && cme.getTrigger().getButton() == MouseEvent.BUTTON1) {
 
                     XYItemEntity item = (XYItemEntity) entity;
-                    LabelPopupMenu labelMenu = new LabelPopupMenu(chartPanel, item);
+                    LabelPopupMenu labelMenu = new LabelPopupMenu(chartPanel, item, lrps.getSelectedValue());
 
                     labelMenu.show(chartPanel, cme.getTrigger().getX(), cme.getTrigger().getY());
                 }

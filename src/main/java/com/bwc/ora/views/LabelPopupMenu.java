@@ -5,11 +5,14 @@
  */
 package com.bwc.ora.views;
 
+import com.bwc.ora.models.Lrp;
 import com.bwc.ora.models.RetinalBand;
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import org.jfree.chart.ChartPanel;
@@ -25,11 +28,13 @@ public class LabelPopupMenu extends JPopupMenu {
 
     private final ChartPanel chartPanel;
     private final XYItemEntity item;
+    private final Lrp lrp;
 
-    public LabelPopupMenu(ChartPanel chartPanel, XYItemEntity item) {
+    public LabelPopupMenu(ChartPanel chartPanel, XYItemEntity item, Lrp lrp) {
         super("Retinal Band Labels");
         this.chartPanel = chartPanel;
         this.item = item;
+        this.lrp = lrp;
         initMenu();
     }
 
@@ -42,6 +47,7 @@ public class LabelPopupMenu extends JPopupMenu {
             JMenuItem nonItem = new JMenuItem("Remove Label");
             nonItem.addActionListener(e -> {
                 removeAnnotation();
+                lrp.setAnnotations(getAnnotations());
             });
             add(nonItem);
         }
@@ -62,17 +68,18 @@ public class LabelPopupMenu extends JPopupMenu {
                     pointer.setTextAnchor(TextAnchor.CENTER_LEFT);
                     JMenuItem l = new JMenuItem(label);
                     l.addActionListener(e -> {
-                        if(hasAnnotationAlready){
+                        if (hasAnnotationAlready) {
                             removeAnnotation();
                         }
                         chartPanel.getChart().getXYPlot().addAnnotation(pointer);
+                        lrp.setAnnotations(getAnnotations());
                     });
                     return l;
                 })
                 .forEach(this::add);
     }
 
-    private void removeAnnotation(){
+    private void removeAnnotation() {
         for (Object annotation : chartPanel.getChart().getXYPlot().getAnnotations()) {
             if (annotation instanceof XYPointerAnnotation) {
                 XYPointerAnnotation pointer = (XYPointerAnnotation) annotation;
@@ -84,8 +91,8 @@ public class LabelPopupMenu extends JPopupMenu {
             }
         }
     }
-    
-    private boolean hasAnnoationAlready(){
+
+    private boolean hasAnnoationAlready() {
         boolean hasAnnotationAlready = false;
         for (Object annotation : chartPanel.getChart().getXYPlot().getAnnotations()) {
             if (annotation instanceof XYPointerAnnotation) {
@@ -98,5 +105,15 @@ public class LabelPopupMenu extends JPopupMenu {
             }
         }
         return hasAnnotationAlready;
+    }
+
+    private List<XYPointerAnnotation> getAnnotations() {
+        List<XYPointerAnnotation> annotations = (List<XYPointerAnnotation>) chartPanel.getChart()
+                .getXYPlot()
+                .getAnnotations()
+                .stream()
+                .filter(a -> a instanceof XYPointerAnnotation)
+                .collect(Collectors.toList());
+        return annotations;
     }
 }
