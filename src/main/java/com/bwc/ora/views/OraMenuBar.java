@@ -23,6 +23,7 @@ public class OraMenuBar extends JMenuBar {
     //file menu options
     JMenu fileMenu = new JMenu();
     JMenuItem newAnalysis = new JMenuItem();
+    JMenuItem testAnalysis = new JMenuItem();
     JMenuItem open = new JMenuItem();
     JMenuItem export = new JMenuItem();
     JMenuItem save = new JMenuItem();
@@ -54,39 +55,28 @@ public class OraMenuBar extends JMenuBar {
 
         newAnalysis.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         newAnalysis.setText("New Analysis");
-        newAnalysis.addActionListener((evt) -> {
-            //operation hook-up here
-        });
         fileMenu.add(newAnalysis);
+
+        testAnalysis.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, java.awt.event.InputEvent.CTRL_MASK));
+        testAnalysis.setText("Test Analysis");
+        fileMenu.add(testAnalysis);
 
         open.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         open.setText("Open Analysis");
-        open.addActionListener((evt) -> {
-            //operation hook-up here
-        });
         fileMenu.add(open);
 
         export.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
         export.setText("Export Analysis Results");
         export.setEnabled(false);
-        export.addActionListener((evt) -> {
-            //operation hook-up here
-        });
         fileMenu.add(export);
 
         save.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         save.setText("Save Analysis");
         save.setEnabled(false);
-        save.addActionListener((evt) -> {
-            //operation hook-up here
-        });
         fileMenu.add(save);
 
         exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
         exit.setText("Quit");
-        exit.addActionListener((evt) -> {
-            //operation hook-up here
-        });
         fileMenu.add(exit);
 
         this.add(fileMenu);
@@ -106,6 +96,7 @@ public class OraMenuBar extends JMenuBar {
 
     private void connectFileOperations() {
         newAnalysis.addActionListener(OraUtils.newAnalysisActionListener);
+        testAnalysis.addActionListener(OraUtils.testAnalysisActionListener);
     }
 
     private void connectSettingsToModel() {

@@ -7,26 +7,39 @@ package com.bwc.ora.views;
 
 import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.LrpCollection;
-import com.bwc.ora.models.Lrp;
 import com.bwc.ora.models.LrpSeries;
 import com.bwc.ora.models.LrpSettings;
 import com.bwc.ora.models.Models;
 import com.bwc.ora.models.OctSettings;
+import com.bwc.ora.models.RetinalBand;
 import com.bwc.ora.views.render.HighlightXYRenderer;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Arrays;
 import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JMenuItem;
+import javax.swing.JPopupMenu;
 import javax.swing.event.ListSelectionEvent;
 import org.jfree.chart.ChartFactory;
+import org.jfree.chart.ChartMouseEvent;
+import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
+import org.jfree.chart.annotations.XYPointerAnnotation;
+import org.jfree.chart.entity.ChartEntity;
+import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.xy.XYLineAndShapeRenderer;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 import org.jfree.data.xy.XYSeriesCollection;
+import org.jfree.ui.TextAnchor;
 
 /**
  *
@@ -150,6 +163,51 @@ public class LrpDisplayFrame extends JFrame {
             renderer.setSeriesPaint(i, Color.BLACK);
             renderer.setSeriesVisibleInLegend(i, false, false);
         }
+
+        //add mouse listener for chart to detect when to display labels for
+        //peaks in the pop-up menu
+        chartPanel.addChartMouseListener(new ChartMouseListener() {
+
+            @Override
+            public void chartMouseClicked(ChartMouseEvent cme) {
+                ChartEntity entity = cme.getEntity();
+                System.out.println("Chart clikced! Button: " + cme.getTrigger().getButton());
+                if (entity instanceof XYItemEntity
+                        && cme.getTrigger().getButton() == MouseEvent.BUTTON1) {
+                    JPopupMenu labelMenu = new JPopupMenu();
+                   XYItemEntity item = (XYItemEntity)entity;
+                    Arrays.stream(RetinalBand.values())
+                            .map(RetinalBand::toString)
+                            .map(label -> {
+                                XYPointerAnnotation pointer = new XYPointerAnnotation(
+                                        label,
+                                        item.getDataset().getXValue(item.getSeriesIndex(), item.getItem()),
+                                        item.getDataset().getYValue(item.getSeriesIndex(), item.getItem()),
+                                        0);
+                                pointer.setBaseRadius(35.0);
+                                pointer.setTipRadius(10.0);
+                                pointer.setFont(new Font("SansSerif", Font.PLAIN, 9));
+                                pointer.setPaint(Color.blue);
+                                pointer.setTextAnchor(TextAnchor.CENTER_LEFT);
+                                JMenuItem l = new JMenuItem(label);
+                                l.addActionListener(e -> {
+                                    chartPanel.getChart().getXYPlot().addAnnotation(pointer);
+                                });
+                                return l;
+                            })
+                            .forEach(labelMenu::add);
+                    labelMenu.show(chartPanel, cme.getTrigger().getX(), cme.getTrigger().getY());
+                } else {
+
+                }
+            }
+
+            @Override
+            public void chartMouseMoved(ChartMouseEvent cme) {
+                //do nothing, this doesn't matter
+            }
+
+        });
 
         chartPanel.getChart().getXYPlot().setRenderer(renderer);
     }

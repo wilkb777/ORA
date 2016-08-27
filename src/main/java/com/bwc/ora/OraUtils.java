@@ -23,6 +23,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,6 +40,17 @@ public class OraUtils {
 
     private static final JFileChooser fc = new JFileChooser();
     private static final LrpCollection lrpCollection = Collections.getInstance().getLrpCollection();
+
+    public static final ActionListener testAnalysisActionListener = evt -> {
+        try {
+            //read in image and ready for analysis
+            OraUtils.loadOctFromTiffFile(new File(OraUtils.class.getClassLoader().getResource("KS_10238_OS_L_7_90_05_529disp_reg_fr1-25_AL21p35.tif").toURI()), Oct.getInstance());
+        } catch (IOException | URISyntaxException ex) {
+            JOptionPane.showMessageDialog(null, "Image loading failed,"
+                    + " reason: " + ex.getMessage(), "Loading error!", JOptionPane.ERROR_MESSAGE
+            );
+        }
+    };
 
     public static final ActionListener newAnalysisActionListener = evt -> {
         try {
