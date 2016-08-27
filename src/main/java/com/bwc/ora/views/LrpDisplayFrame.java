@@ -165,40 +165,19 @@ public class LrpDisplayFrame extends JFrame {
         }
 
         //add mouse listener for chart to detect when to display labels for
-        //peaks in the pop-up menu
+        //peaks in the pop-up menu, also specify what to do when label is clicked
         chartPanel.addChartMouseListener(new ChartMouseListener() {
 
             @Override
             public void chartMouseClicked(ChartMouseEvent cme) {
                 ChartEntity entity = cme.getEntity();
-                System.out.println("Chart clikced! Button: " + cme.getTrigger().getButton());
                 if (entity instanceof XYItemEntity
                         && cme.getTrigger().getButton() == MouseEvent.BUTTON1) {
-                    JPopupMenu labelMenu = new JPopupMenu();
-                   XYItemEntity item = (XYItemEntity)entity;
-                    Arrays.stream(RetinalBand.values())
-                            .map(RetinalBand::toString)
-                            .map(label -> {
-                                XYPointerAnnotation pointer = new XYPointerAnnotation(
-                                        label,
-                                        item.getDataset().getXValue(item.getSeriesIndex(), item.getItem()),
-                                        item.getDataset().getYValue(item.getSeriesIndex(), item.getItem()),
-                                        0);
-                                pointer.setBaseRadius(35.0);
-                                pointer.setTipRadius(10.0);
-                                pointer.setFont(new Font("SansSerif", Font.PLAIN, 9));
-                                pointer.setPaint(Color.blue);
-                                pointer.setTextAnchor(TextAnchor.CENTER_LEFT);
-                                JMenuItem l = new JMenuItem(label);
-                                l.addActionListener(e -> {
-                                    chartPanel.getChart().getXYPlot().addAnnotation(pointer);
-                                });
-                                return l;
-                            })
-                            .forEach(labelMenu::add);
-                    labelMenu.show(chartPanel, cme.getTrigger().getX(), cme.getTrigger().getY());
-                } else {
 
+                    XYItemEntity item = (XYItemEntity) entity;
+                    LabelPopupMenu labelMenu = new LabelPopupMenu(chartPanel, item);
+
+                    labelMenu.show(chartPanel, cme.getTrigger().getX(), cme.getTrigger().getY());
                 }
             }
 
