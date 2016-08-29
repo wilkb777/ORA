@@ -6,6 +6,9 @@
 package com.bwc.ora.collections;
 
 import com.bwc.ora.views.OCTOverlay;
+import com.bwc.ora.views.OctDrawnPoint;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.stream.Stream;
 import javax.swing.JList;
 import javax.swing.ListSelectionModel;
@@ -18,6 +21,7 @@ public class Collections {
 
     private final LrpCollection lrpCollection;
     private final ViewsCollection viewsCollection;
+    private final OctDrawnPointCollection octDrawnPointCollection;
 
     private Collections() {
         //initialize the lrp collection and set display settings
@@ -27,6 +31,8 @@ public class Collections {
         lrpCollection.setVisibleRowCount(1);
         //initialize the views collection
         viewsCollection = new ViewsCollection();
+        //initialize the Drawn OCT points collection
+        octDrawnPointCollection = new OctDrawnPointCollection();
     }
 
     public static Collections getInstance() {
@@ -43,10 +49,18 @@ public class Collections {
     }
 
     public Stream<OCTOverlay> getOverlaysStream() {
-        return lrpCollection.streamSelected().map(lrp -> (OCTOverlay) lrp);
+        return Stream.concat(
+                lrpCollection.streamSelected(),
+                octDrawnPointCollection.stream()
+        );
     }
 
     public ViewsCollection getViewsCollection() {
         return viewsCollection;
     }
+
+    public OctDrawnPointCollection getOctDrawnPointCollection() {
+        return octDrawnPointCollection;
+    }
+
 }

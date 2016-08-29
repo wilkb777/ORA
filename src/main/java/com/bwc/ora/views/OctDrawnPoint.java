@@ -34,7 +34,7 @@ public class OctDrawnPoint implements OCTOverlay {
     public void drawOverlay(BufferedImage baseImg) {
         Graphics2D graphics = baseImg.createGraphics();
         graphics.setColor(Color.red);
-//        graphics.drawRect(imageOffsetX + drawPoint.x - 1, imageOffsetY + drawPoint.y - 1, 3, 3);
+        graphics.drawRect(pointToDraw.x - 1, pointToDraw.y - 1, 3, 3);
     }
 
     @Override

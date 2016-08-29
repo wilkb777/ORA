@@ -7,6 +7,8 @@ package com.bwc.ora.views;
 
 import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.LrpCollection;
+import com.bwc.ora.collections.OctDrawnPointCollection;
+import com.bwc.ora.ip.ImageUtils;
 import com.bwc.ora.models.DisplaySettings;
 import com.bwc.ora.models.Lrp;
 import com.bwc.ora.models.LrpSettings;
@@ -35,8 +37,10 @@ public class OCTDisplayPanel extends JLabel {
     private final DisplaySettings dispSettings = Models.getInstance().getDisplaySettings();
     private final OctSettings octSettings = Models.getInstance().getOctSettings();
     private LrpCollection lrps = Collections.getInstance().getLrpCollection();
+    private OctDrawnPointCollection drawnPointCollection = Collections.getInstance().getOctDrawnPointCollection();
     private final LrpSettings lrpSettings = Models.getInstance().getLrpSettings();
     private final Collections collections = Collections.getInstance();
+    private BufferedImage cachedOct = null;
 
     private transient final ChangeSupport changeSupport = new ChangeSupport(this);
 
@@ -45,14 +49,14 @@ public class OCTDisplayPanel extends JLabel {
 
         //register listener for changes to Oct for auto update on change
         oct.addPropertyChangeListener(evt -> {
-            updateDisplay();
+            updateDisplay(false);
         });
 
         //register listeners for changes to display settings for auto update on change
         dispSettings.addPropertyChangeListener(evt -> {
             switch (evt.getPropertyName()) {
                 case DisplaySettings.PROP_DISPLAY_SCALE_BARS_ON_OCT:
-                    updateDisplay();
+                    updateDisplay(true);
                 default:
                     break;
             }
@@ -67,9 +71,11 @@ public class OCTDisplayPanel extends JLabel {
                 case OctSettings.PROP_SHARPEN_KERNEL_RADIUS:
                 case OctSettings.PROP_SHARPEN_WEIGHT:
                 case OctSettings.PROP_SMOOTHING_FACTOR:
+                    updateDisplay(false);
+                    break;
                 case OctSettings.PROP_X_SCALE:
                 case OctSettings.PROP_Y_SCALE:
-                    updateDisplay();
+                    updateDisplay(true);
                 default:
                     break;
             }
@@ -78,8 +84,13 @@ public class OCTDisplayPanel extends JLabel {
         //add listener to check to see if LRP selection should be displayed 
         lrps.addListSelectionListener((ListSelectionEvent e) -> {
             if (e.getValueIsAdjusting() == false) {
-                updateDisplay();
+                updateDisplay(true);
             }
+        });
+
+        //add listener to check to see if Drawn Points have changed
+        drawnPointCollection.addCollectionEventListener(e -> {
+            updateDisplay(true);
         });
 
         //add listener to check for updates to lrp settings to change lrp
@@ -88,7 +99,7 @@ public class OCTDisplayPanel extends JLabel {
                 switch (e.getPropertyName()) {
                     case LrpSettings.PROP_LRP_HEIGHT:
                     case LrpSettings.PROP_LRP_WIDTH:
-                        updateDisplay();
+                        updateDisplay(true);
                     default:
                         break;
                 }
@@ -106,8 +117,14 @@ public class OCTDisplayPanel extends JLabel {
         private static final OCTDisplayPanel INSTANCE = new OCTDisplayPanel();
     }
 
-    private void updateDisplay() {
-        BufferedImage copyoct = oct.getTransformedOct();
+    private void updateDisplay(boolean useCachedOct) {
+        BufferedImage copyoct;
+        if (useCachedOct) {
+            copyoct = ImageUtils.deepCopy(cachedOct);
+        } else {
+            copyoct = oct.getTransformedOct();
+            cachedOct = copyoct;
+        }
         if (copyoct == null) {
             return;
         }

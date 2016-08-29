@@ -7,6 +7,7 @@ package com.bwc.ora.views;
 
 import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.LrpCollection;
+import com.bwc.ora.collections.OctDrawnPointCollection;
 import com.bwc.ora.models.LrpSeries;
 import com.bwc.ora.models.LrpSettings;
 import com.bwc.ora.models.Models;
@@ -16,12 +17,14 @@ import com.bwc.ora.views.render.HighlightXYRenderer;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
@@ -32,6 +35,8 @@ import org.jfree.chart.ChartMouseEvent;
 import org.jfree.chart.ChartMouseListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.annotations.XYPointerAnnotation;
+import org.jfree.chart.axis.NumberAxis;
+import org.jfree.chart.axis.ValueAxis;
 import org.jfree.chart.entity.ChartEntity;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.chart.plot.PlotOrientation;
@@ -48,6 +53,7 @@ import org.jfree.ui.TextAnchor;
 public class LrpDisplayFrame extends JFrame {
 
     private LrpCollection lrps = Collections.getInstance().getLrpCollection();
+    private OctDrawnPointCollection octDrawnPointsCollection = Collections.getInstance().getOctDrawnPointCollection();
     private final LrpSettings lrpSettings = Models.getInstance().getLrpSettings();
     private final OctSettings octSettings = Models.getInstance().getOctSettings();
     private final ChartPanel chartPanel;
@@ -183,12 +189,40 @@ public class LrpDisplayFrame extends JFrame {
 
             @Override
             public void chartMouseMoved(ChartMouseEvent cme) {
-                //do nothing, this doesn't matter
+                ChartEntity entity = cme.getEntity();
+                if (!(entity instanceof XYItemEntity)) {
+                    renderer.setHighlightedItem(-1, -1);
+                    octDrawnPointsCollection.clear();
+                } else {
+                    XYItemEntity xyent = (XYItemEntity) entity;
+                    renderer.setHighlightedItem(xyent.getSeriesIndex(), xyent.getItem());
+                    int x = lrps.getSelectedValue().getLrpCenterXPosition();
+                    //get the Y value of the item on the LRP (in the case of 
+                    // the graph this is the X value since the orientation of the plot is flipped)
+                    int y = (int) Math.round(xyent.getDataset().getXValue(xyent.getSeriesIndex(), xyent.getItem()));
+                    octDrawnPointsCollection.add(new OctDrawnPoint("Peak", new Point(x, y)));
+                }
             }
 
         });
 
         chartPanel.getChart().getXYPlot().setRenderer(renderer);
+
+        //mark the Domain (which appears as the range in a horizontal graph) 
+        // axis as inverted so LRP matches with OCT
+        ValueAxis domainAxis = chartPanel.getChart().getXYPlot().getDomainAxis();
+        if (domainAxis instanceof NumberAxis) {
+            NumberAxis axis = (NumberAxis) domainAxis;
+            axis.setInverted(true);
+        }
+
+        //disable the need for the range of the chart to include zero
+        ValueAxis rangeAxis = chartPanel.getChart().getXYPlot().getRangeAxis();
+        if (rangeAxis instanceof NumberAxis) {
+            NumberAxis axis = (NumberAxis) rangeAxis;
+            axis.setAutoRangeIncludesZero(false);
+        }
+
     }
 
     private void updateSeries(LrpSeries lrpSeries) {
