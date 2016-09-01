@@ -223,6 +223,10 @@ public class LrpDisplayFrame extends JFrame {
             axis.setAutoRangeIncludesZero(false);
         }
 
+        //if there were any previous annotations to the LRP add them to the chart
+        lrps.getSelectedValue()
+                .getAnnotations()
+                .forEach(chartPanel.getChart().getXYPlot()::addAnnotation);
     }
 
     private void updateSeries(LrpSeries lrpSeries) {
