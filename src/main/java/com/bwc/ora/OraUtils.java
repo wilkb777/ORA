@@ -7,14 +7,16 @@ package com.bwc.ora;
 
 import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.LrpCollection;
+import com.bwc.ora.io.ExportWriter;
 import com.bwc.ora.io.TiffReader;
 import com.bwc.ora.models.Lrp;
 import com.bwc.ora.models.LrpSettings;
 import com.bwc.ora.models.LrpType;
-import com.bwc.ora.models.Models;
+import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.models.Oct;
 import com.bwc.ora.views.LrpDisplayFrame;
 import com.bwc.ora.views.OCTDisplayPanel;
+
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -27,18 +29,19 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class OraUtils {
 
-    private static final JFileChooser fc = new JFileChooser();
+    private static JFileChooser fc = new JFileChooser();
     private static final LrpCollection lrpCollection = Collections.getInstance().getLrpCollection();
 
     public static final ActionListener testAnalysisActionListener = evt -> {
@@ -61,8 +64,21 @@ public class OraUtils {
             }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Image loading failed,"
-                    + " reason: " + ex.getMessage(), "Loading error!", JOptionPane.ERROR_MESSAGE
-            );
+                    + " reason: " + ex.getMessage(), "Loading error!", JOptionPane.ERROR_MESSAGE);
+        }
+    };
+
+    public static final ActionListener exportAnalysisActionListener = evt -> {
+        try {
+            //read in image and ready for analysis
+            File exportDir = OraUtils.selectFile(null, JFileChooser.DIRECTORIES_ONLY, "Analysis export directory", null);
+            if (exportDir != null) {
+                ExportWriter.exportAnalysis(exportDir);
+            }
+        } catch (IOException | IllegalArgumentException ex) {
+            Logger.getGlobal().log(Level.SEVERE, "Failed to export", ex);
+            JOptionPane.showMessageDialog(null, "Analysis export failed,"
+                    + " reason: " + ex.getMessage(), "Export error!", JOptionPane.ERROR_MESSAGE);
         }
     };
 
@@ -72,10 +88,15 @@ public class OraUtils {
     }
 
     public static File selectFile(Component parent, int selectorType, String selectDescription, String extensionDescription, String... extentions) {
-        fc.resetChoosableFileFilters();
+        File prevLocation = fc.getSelectedFile() != null ? fc.getSelectedFile().getParentFile() : null;
+
+        fc = new JFileChooser(prevLocation);
         fc.setMultiSelectionEnabled(false);
         fc.setFileSelectionMode(selectorType);
-        fc.setFileFilter(new FileNameExtensionFilter(extensionDescription, extentions));
+        if (selectorType == JFileChooser.FILES_ONLY) {
+            fc.setFileFilter(new FileNameExtensionFilter(extensionDescription, extentions));
+        }
+        fc.setAcceptAllFileFilterUsed(false);
         fc.setApproveButtonText("Select");
         fc.setDialogTitle("Select " + selectDescription + "...");
         if (fc.getSelectedFile() != null && fc.getSelectedFile().isFile()) {
@@ -123,11 +144,11 @@ public class OraUtils {
      * analysis and display
      *
      * @param assisted use fovea finding algorithm or manual click to identify
-     * fovea
+     *                 fovea
      */
     public static void generateAnchorLrp(boolean assisted) {
         OCTDisplayPanel lrpPanel = OCTDisplayPanel.getInstance();
-        LrpSettings lrpSettings = Models.getInstance().getLrpSettings();
+        LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
         if (assisted) {
             //todo add in assistive fovea finding
         } else {
@@ -159,7 +180,7 @@ public class OraUtils {
             return;
         }
 
-        LrpSettings lrpSettings = Models.getInstance().getLrpSettings();
+        LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
         int octWidth = Oct.getInstance().getImageWidth();
         int distanceBetweenLrps = lrpSettings.getLrpSeperationDistanceInPixels();
         int numberOfLrpTotal = lrpSettings.getNumberOfLrp();

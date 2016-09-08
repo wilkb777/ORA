@@ -7,7 +7,7 @@ package com.bwc.ora.views.toolbars;
 
 import com.bwc.ora.OraUtils;
 import com.bwc.ora.models.LrpSettings;
-import com.bwc.ora.models.Models;
+import com.bwc.ora.collections.ModelsCollection;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -49,7 +49,7 @@ public class LrpSettingsPanel extends JPanel {
 
     public LrpSettingsPanel() {
         super();
-        LrpSettings settings = Models.getInstance().getLrpSettings();
+        LrpSettings settings = ModelsCollection.getInstance().getLrpSettings();
         this.lrpHeightTextField = new ToolbarTextField(settings.getLrpHeight());
         this.lrpSeparationDistanceUnitsButtonGroup = new ButtonGroup();
         this.lrpSeparationDistanceInPixels = new JRadioButton("pixels", settings.isDistanceUnitsInPixels());
@@ -156,7 +156,7 @@ public class LrpSettingsPanel extends JPanel {
     }
 
     private void connectToModel() {
-        LrpSettings settings = Models.getInstance().getLrpSettings();
+        LrpSettings settings = ModelsCollection.getInstance().getLrpSettings();
 
         lrpWidthField.addActionListener(evt -> settings.setLrpWidth((int) ((JComboBox) evt.getSource()).getSelectedItem()));
         settings.addPropertyChangeListener(evt -> {

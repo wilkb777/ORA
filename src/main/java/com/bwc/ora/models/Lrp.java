@@ -5,6 +5,7 @@
  */
 package com.bwc.ora.models;
 
+import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.ip.ImageUtils;
 import com.bwc.ora.views.OCTOverlay;
 import java.awt.Color;
@@ -46,7 +47,7 @@ public class Lrp extends Rectangle implements OCTOverlay {
         this.type = type;
 
         //add listener to check for updates to lrp settings to change lrp
-        LrpSettings lrpSettings = Models.getInstance().getLrpSettings();
+        LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
         lrpSettings.addFirstPriorityPropertyChangeListener(e -> {
             switch (e.getPropertyName()) {
                 case LrpSettings.PROP_LRP_SMOOTHING_FACTOR:
@@ -337,7 +338,7 @@ public class Lrp extends Rectangle implements OCTOverlay {
         Graphics2D graphics = baseImg.createGraphics();
         graphics.setColor(Color.green);
         graphics.draw(this);
-        System.out.println("Drawing selection on OCT...");
+//        System.out.println("Drawing selection on OCT...");
     }
 
     @Override

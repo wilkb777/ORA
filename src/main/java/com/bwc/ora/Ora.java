@@ -9,7 +9,7 @@ import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.ViewsCollection;
 import com.bwc.ora.io.TiffReader;
 import com.bwc.ora.models.DisplaySettings;
-import com.bwc.ora.models.Models;
+import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.views.MousePositionListeningLabel;
 import com.bwc.ora.views.toolbars.LrpSettingsPanel;
 import com.bwc.ora.views.OCTDisplayPanel;
@@ -19,6 +19,7 @@ import com.bwc.ora.models.Oct;
 import com.bwc.ora.views.LrpDisplayFrame;
 import com.bwc.ora.views.toolbars.AnalysisPanel;
 import com.bwc.ora.views.toolbars.ToolbarUtilities;
+
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.HeadlessException;
@@ -44,7 +45,6 @@ import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class Ora extends JFrame {
@@ -68,10 +68,8 @@ public class Ora extends JFrame {
             ui.setVisible(true);
             LrpDisplayFrame lrpDisp = LrpDisplayFrame.getInstance();
         });
-        
-    }
 
-    int cntr = 0;
+    }
 
     public Ora(String title) throws HeadlessException {
         super(title);
@@ -140,7 +138,7 @@ public class Ora extends JFrame {
         infoPanel.add(Box.createHorizontalGlue());
 
         //set the file name display to change display based on boolean in settings model
-        DisplaySettings settings = Models.getInstance().getDisplaySettings();
+        DisplaySettings settings = ModelsCollection.getInstance().getDisplaySettings();
         settings.addPropertyChangeListener(evt -> {
             if (DisplaySettings.PROP_DISPLAY_FILE_NAME.equals(evt.getPropertyName())) {
                 currentOctNamePanel.setVisible(settings.isDisplayFileName());
@@ -173,7 +171,7 @@ public class Ora extends JFrame {
                 .getAsInt();
         settingsTabPane.setPreferredSize(new Dimension(maxToolBarWidth, (int) (settingsTabPane.getPreferredSize().height * 1.2D)));
         add(settingsTabPane);
-        
+
         //add toolbars to managed views for interacting with elsewhere in the application
         ViewsCollection viewsCollection = Collections.getInstance().getViewsCollection();
         viewsCollection.add(lrpSettingsPanel);
@@ -181,19 +179,6 @@ public class Ora extends JFrame {
 
         //ready for display of the window.
         pack();
-    }
-
-    final void loadImage(File tiffFile) {
-        BufferedImage img = null;
-        try {
-            //read in image and keep track of the image for later use
-            img = TiffReader.readTiffImage(tiffFile);
-            Oct.getInstance().setLogOctImage(img);
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(this, "Image loading failed for " + tiffFile.getAbsolutePath()
-                    + ", reason: " + ex.getMessage(), "Loading error!", JOptionPane.ERROR_MESSAGE
-            );
-        }
     }
 
 }

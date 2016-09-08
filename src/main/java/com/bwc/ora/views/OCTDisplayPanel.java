@@ -12,7 +12,7 @@ import com.bwc.ora.ip.ImageUtils;
 import com.bwc.ora.models.DisplaySettings;
 import com.bwc.ora.models.Lrp;
 import com.bwc.ora.models.LrpSettings;
-import com.bwc.ora.models.Models;
+import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.models.Oct;
 import com.bwc.ora.models.OctSettings;
 import com.bwc.ora.uitil.ChangeSupport;
@@ -34,11 +34,11 @@ import javax.swing.event.ListSelectionEvent;
 public class OCTDisplayPanel extends JLabel {
 
     private final Oct oct = Oct.getInstance();
-    private final DisplaySettings dispSettings = Models.getInstance().getDisplaySettings();
-    private final OctSettings octSettings = Models.getInstance().getOctSettings();
+    private final DisplaySettings dispSettings = ModelsCollection.getInstance().getDisplaySettings();
+    private final OctSettings octSettings = ModelsCollection.getInstance().getOctSettings();
     private LrpCollection lrps = Collections.getInstance().getLrpCollection();
     private OctDrawnPointCollection drawnPointCollection = Collections.getInstance().getOctDrawnPointCollection();
-    private final LrpSettings lrpSettings = Models.getInstance().getLrpSettings();
+    private final LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
     private final Collections collections = Collections.getInstance();
     private BufferedImage cachedOct = null;
 
@@ -139,7 +139,7 @@ public class OCTDisplayPanel extends JLabel {
         //order overlay layers and draw to image accordingly
         collections.getOverlaysStream()
                 .map(lrp -> {
-                    System.out.println("Streaming overlay, draw LRP? " + (lrp.display()));
+//                    System.out.println("Streaming overlay, draw LRP? " + (lrp.display()));
                     return lrp;
                 })
                 .filter(OCTOverlay::display)
@@ -147,7 +147,7 @@ public class OCTDisplayPanel extends JLabel {
                     return Integer.compare(o1.getZValue(), o2.getZValue());
                 })
                 .forEach((OCTOverlay overlay) -> {
-                    System.out.println("Drawing overlay...");
+//                    System.out.println("Drawing overlay...");
                     overlay.drawOverlay(octBase);
                 });
         //finally set image to be drawn to the screen

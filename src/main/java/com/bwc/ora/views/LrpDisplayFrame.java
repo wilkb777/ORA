@@ -10,7 +10,7 @@ import com.bwc.ora.collections.LrpCollection;
 import com.bwc.ora.collections.OctDrawnPointCollection;
 import com.bwc.ora.models.LrpSeries;
 import com.bwc.ora.models.LrpSettings;
-import com.bwc.ora.models.Models;
+import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.models.OctSettings;
 import com.bwc.ora.models.RetinalBand;
 import com.bwc.ora.views.render.HighlightXYRenderer;
@@ -54,8 +54,8 @@ public class LrpDisplayFrame extends JFrame {
 
     private LrpCollection lrps = Collections.getInstance().getLrpCollection();
     private OctDrawnPointCollection octDrawnPointsCollection = Collections.getInstance().getOctDrawnPointCollection();
-    private final LrpSettings lrpSettings = Models.getInstance().getLrpSettings();
-    private final OctSettings octSettings = Models.getInstance().getOctSettings();
+    private final LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
+    private final OctSettings octSettings = ModelsCollection.getInstance().getOctSettings();
     private final ChartPanel chartPanel;
     private XYSeries lrpSeries = null, maximaSeries = null, hiddenMaximaSeries = null;
 

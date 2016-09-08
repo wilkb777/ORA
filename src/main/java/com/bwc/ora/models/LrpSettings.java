@@ -5,6 +5,7 @@
  */
 package com.bwc.ora.models;
 
+import com.bwc.ora.collections.ModelsCollection;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
@@ -35,6 +36,15 @@ public class LrpSettings {
     private boolean distanceUnitsInPixels = false;
     public static final String PROP_DISTANCE_UNITS_IN_PIXELS = "distanceUnitsInPixels";
 
+    public void resetToDefaultSettings() {
+        setLrpHeight(300);
+        setLrpWidth(5);
+        setNumberOfLrp(1);
+        setLrpSmoothingFactor(0);
+        setLrpSeperationDistance(300D);
+        setDistanceUnitsInPixels(false);
+    }
+    
     /**
      * Convenience method for getting the separation distance between LRPs
      * regardless of the distance units specified by the user.
@@ -45,7 +55,7 @@ public class LrpSettings {
         if (distanceUnitsInPixels) {
             return (int) Math.round(lrpSeperationDistance);
         } else {
-            OctSettings s = Models.getInstance().getOctSettings();
+            OctSettings s = ModelsCollection.getInstance().getOctSettings();
             return (int) Math.round((1D / s.getxScale()) * lrpSeperationDistance);
         }
     }

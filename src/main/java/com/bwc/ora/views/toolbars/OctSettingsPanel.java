@@ -6,7 +6,7 @@
 package com.bwc.ora.views.toolbars;
 
 import com.bwc.ora.models.LrpSettings;
-import com.bwc.ora.models.Models;
+import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.models.OctSettings;
 import java.awt.Component;
 import java.awt.GridBagLayout;
@@ -48,7 +48,7 @@ public class OctSettingsPanel extends JPanel {
 
     public OctSettingsPanel() {
         super();
-        OctSettings settings = Models.getInstance().getOctSettings();
+        OctSettings settings = ModelsCollection.getInstance().getOctSettings();
         this.octNoiseReductionCheckBox = new JCheckBox();
         this.octContrastAdjustCheckBox = new JCheckBox();
         this.octLinearDisplay = new JRadioButton("Linear");
@@ -170,7 +170,7 @@ public class OctSettingsPanel extends JPanel {
     }
 
     private void connectToModel() {
-        OctSettings settings = Models.getInstance().getOctSettings();
+        OctSettings settings = ModelsCollection.getInstance().getOctSettings();
 
         octContrastAdjustCheckBox.addItemListener(evt -> settings.setApplyContrastAdjustment(evt.getStateChange() == ItemEvent.SELECTED));
         settings.addPropertyChangeListener(evt -> {

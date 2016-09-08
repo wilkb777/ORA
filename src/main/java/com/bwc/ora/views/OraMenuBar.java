@@ -7,15 +7,14 @@ package com.bwc.ora.views;
 
 import com.bwc.ora.OraUtils;
 import com.bwc.ora.models.DisplaySettings;
-import com.bwc.ora.models.Models;
+import com.bwc.ora.collections.ModelsCollection;
+
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 
 /**
- *
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class OraMenuBar extends JMenuBar {
@@ -27,7 +26,6 @@ public class OraMenuBar extends JMenuBar {
     JMenuItem open = new JMenuItem();
     JMenuItem export = new JMenuItem();
     JMenuItem save = new JMenuItem();
-    JMenuItem exportResults = new JMenuItem();
     JMenuItem exit = new JMenuItem();
     //display menu options
     JMenu displayMenu = new JMenu();
@@ -67,7 +65,6 @@ public class OraMenuBar extends JMenuBar {
 
         export.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
         export.setText("Export Analysis Results");
-        export.setEnabled(false);
         fileMenu.add(export);
 
         save.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
@@ -97,10 +94,11 @@ public class OraMenuBar extends JMenuBar {
     private void connectFileOperations() {
         newAnalysis.addActionListener(OraUtils.newAnalysisActionListener);
         testAnalysis.addActionListener(OraUtils.testAnalysisActionListener);
+        export.addActionListener(OraUtils.exportAnalysisActionListener);
     }
 
     private void connectSettingsToModel() {
-        DisplaySettings settings = Models.getInstance().getDisplaySettings();
+        DisplaySettings settings = ModelsCollection.getInstance().getDisplaySettings();
 
         displayFileNameCheckBox.setSelected(settings.isDisplayFileName());
         displayFileNameCheckBox.addItemListener(evt -> settings.setDisplayFileName(displayFileNameCheckBox.isSelected()));

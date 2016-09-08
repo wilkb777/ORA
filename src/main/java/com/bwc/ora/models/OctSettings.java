@@ -44,6 +44,17 @@ public class OctSettings {
     public static final String PROP_X_SCALE = "xScale";
     private double yScale = 0D; //microns per pixel
     public static final String PROP_Y_SCALE = "yScale";
+    
+    public void resetToDefaultSettings() {
+        setApplyNoiseReduction(false);
+        setApplyContrastAdjustment(false);
+        setDisplayLogOct(true);
+        setSmoothingFactor(0D);
+        setSharpenWeight(0F);
+        setSharpenKernelRadius(0D);
+        setxScale(0D);
+        setyScale(0D);
+    }
 
     public static double getSmoothingFactorSliderMultiplier() {
         return smoothingFactorSliderMultiplier;

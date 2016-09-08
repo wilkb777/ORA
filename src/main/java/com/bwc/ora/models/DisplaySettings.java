@@ -13,7 +13,7 @@ import java.beans.PropertyChangeSupport;
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class DisplaySettings {
-    
+
     private boolean displayFileName = true;
     public static final String PROP_DISPLAY_FILE_NAME = "displayFileName";
     private boolean showLrpPeaks = true;
@@ -22,6 +22,13 @@ public class DisplaySettings {
     public static final String PROP_SHOW_FWHM_ON_LRP = "showFwhmOnLrp";
     private boolean displayScaleBarsOnOct = true;
     public static final String PROP_DISPLAY_SCALE_BARS_ON_OCT = "displayScaleBarsOnOct";
+
+    public void resetToDefaultSettings() {
+        setDisplayFileName(true);
+        setShowFwhmOnLrp(false);
+        setShowLrpPeaks(true);
+        setDisplayScaleBarsOnOct(true);
+    }
 
     /**
      * Get the value of displayScaleBarsOnOct

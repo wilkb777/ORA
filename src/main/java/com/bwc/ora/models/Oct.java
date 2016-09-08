@@ -1,15 +1,18 @@
 package com.bwc.ora.models;
 
+import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.ip.FilterOperation;
 import com.bwc.ora.ip.ImageUtils;
 import ij.ImagePlus;
 import ij.process.ImageConverter;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 /**
- *
  * @author Brandon
  */
 public class Oct {
@@ -18,7 +21,7 @@ public class Oct {
     private String fileName;
     private BufferedImage linearOctImage;
     private transient static final double logScale = 255D / Math.log(255D);
-    private transient static final OctSettings settings = Models.getInstance().getOctSettings();
+    private transient static final OctSettings settings = ModelsCollection.getInstance().getOctSettings();
 
     public transient static final String PROP_LOG_OCT = "oct";
 
@@ -138,6 +141,10 @@ public class Oct {
 
     public String getFileName() {
         return fileName;
+    }
+
+    public String getFileNameWithoutExtension() {
+        return FilenameUtils.removeExtension(fileName);
     }
 
     /**

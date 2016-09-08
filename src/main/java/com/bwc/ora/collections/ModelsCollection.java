@@ -3,28 +3,32 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.bwc.ora.models;
+package com.bwc.ora.collections;
+
+import com.bwc.ora.models.DisplaySettings;
+import com.bwc.ora.models.LrpSettings;
+import com.bwc.ora.models.OctSettings;
 
 /**
  *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
-public class Models {
+public class ModelsCollection {
     
     private final LrpSettings lrpSettings = new LrpSettings();
     private final OctSettings octSettings = new OctSettings();
     private final DisplaySettings displaySettings = new DisplaySettings();
     
-    private Models() {
+    private ModelsCollection() {
     }
     
-    public static Models getInstance() {
+    public static ModelsCollection getInstance() {
         return ModelsHolder.INSTANCE;
     }
 
     private static class ModelsHolder {
 
-        private static final Models INSTANCE = new Models();
+        private static final ModelsCollection INSTANCE = new ModelsCollection();
     }
 
     public LrpSettings getLrpSettings() {
