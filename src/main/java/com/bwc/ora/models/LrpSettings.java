@@ -143,7 +143,7 @@ public class LrpSettings {
      *
      * @param numberOfLrp new value of numberOfLrp
      */
-    public void setNumberOfLrp(int numberOfLrp) {
+    public void setNumberOfLrp(int numberOfLrp) throws IllegalArgumentException {
         if (this.numberOfLrp == numberOfLrp) {
             return;
         }

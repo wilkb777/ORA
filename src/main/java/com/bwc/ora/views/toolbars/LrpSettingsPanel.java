@@ -239,7 +239,12 @@ public class LrpSettingsPanel extends JPanel {
         });
 
         runAnalysisButton.addActionListener(evt -> {
-            OraUtils.runAnalysis();
+            try {
+                OraUtils.runAnalysis();
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(null, "An error was encountered:\n" + e.getMessage()
+                        + "\nRevise settings and try to run the analysis again.", "Settings Error", JOptionPane.ERROR_MESSAGE);
+            }
         });
 
     }

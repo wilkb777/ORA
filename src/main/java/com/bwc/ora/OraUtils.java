@@ -9,11 +9,8 @@ import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.LrpCollection;
 import com.bwc.ora.io.ExportWriter;
 import com.bwc.ora.io.TiffReader;
-import com.bwc.ora.models.Lrp;
-import com.bwc.ora.models.LrpSettings;
-import com.bwc.ora.models.LrpType;
+import com.bwc.ora.models.*;
 import com.bwc.ora.collections.ModelsCollection;
-import com.bwc.ora.models.Oct;
 import com.bwc.ora.views.LrpDisplayFrame;
 import com.bwc.ora.views.OCTDisplayPanel;
 
@@ -194,17 +191,14 @@ public class OraUtils {
         lrps.add(fovealLrp);
         while (lrps.size() < numberOfLrpTotal) {
             lrpPosToLeftOfFovea -= distanceBetweenLrps;
-            if (lrpPosToLeftOfFovea >= (lrpSettings.getLrpWidth() - 1) / 2) {
-                lrps.push(new Lrp("Left " + ((lrps.size() + 1) / 2),
-                        lrpPosToLeftOfFovea,
-                        lrpSettings.getLrpWidth(),
-                        lrpSettings.getLrpHeight(),
-                        LrpType.PERIPHERAL));
-            }
+            lrps.push(new Lrp("Left " + ((lrps.size() + 1) / 2),
+                    lrpPosToLeftOfFovea,
+                    lrpSettings.getLrpWidth(),
+                    lrpSettings.getLrpHeight(),
+                    LrpType.PERIPHERAL));
 
             lrpPosToRightOfFovea += distanceBetweenLrps;
-            if (lrps.size() < numberOfLrpTotal
-                    && lrpPosToRightOfFovea < octWidth - ((lrpSettings.getLrpWidth() - 1) / 2)) {
+            if (lrps.size() < numberOfLrpTotal) {
                 lrps.add(new Lrp("Right " + (lrps.size() / 2),
                         lrpPosToRightOfFovea,
                         lrpSettings.getLrpWidth(),
@@ -212,7 +206,15 @@ public class OraUtils {
                         LrpType.PERIPHERAL));
             }
         }
-        System.out.println("Number of lrps: " + lrps.size());
+
+        boolean illegalPositionLrps = lrps.stream()
+                .anyMatch(lrp -> lrp.getLrpCenterXPosition() - ((lrpSettings.getLrpWidth() - 1) / 2) < 0
+                        || lrp.getLrpCenterXPosition() + ((lrpSettings.getLrpWidth() - 1) / 2) >= octWidth);
+
+        if (illegalPositionLrps) {
+            throw new IllegalArgumentException("Combination of LRP width, the number of LRPs and LRP " +
+                    "separation distance cannot fit within the bounds of the OCT.");
+        }
         lrpCollection.setLrps(lrps);
     }
 
@@ -233,18 +235,21 @@ public class OraUtils {
     }
 
     public static void runAnalysis() {
-        System.out.println("Disabling panels...");
+        OctSettings octSettings = ModelsCollection.getInstance().getOctSettings();
+        if (!(octSettings.getyScale() > 0 && octSettings.getxScale() > 0)){
+            throw new IllegalArgumentException("X and Y scale must be positive, non-zero decimal numbers.");
+        }
+
+        /*
+         Based on the current settings generate the appropriate number of LRPs for the user to analyze
+         */
+            setLrpsForAnalysis();
 
         //disable settings panels so no changes to the settings can be made
         Collections.getInstance().getViewsCollection().disableViewsInputs();
 
         //move to analysis tab
         Collections.getInstance().getViewsCollection().setAnalysisTabAsSelectedTab();
-
-        /*
-         Based on the current settings generate the approriate number of LRPs for the user to analyze
-         */
-        System.out.println("Setting Lrps...");
-        setLrpsForAnalysis();
     }
+
 }

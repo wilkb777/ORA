@@ -3,6 +3,7 @@ package com.bwc.ora.io;
 import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.LrpCollection;
 import com.bwc.ora.collections.ModelsCollection;
+import com.bwc.ora.models.Lrp;
 import com.bwc.ora.models.LrpSettings;
 import com.bwc.ora.models.Oct;
 import com.bwc.ora.models.OctSettings;
@@ -16,6 +17,7 @@ import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Brandon on 9/7/2016.
@@ -27,6 +29,7 @@ public class ExportWriter {
     private static void writeSettingsCsv(File outdir) throws FileNotFoundException {
         LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
         OctSettings octSettings = ModelsCollection.getInstance().getOctSettings();
+        LrpCollection lrps = Collections.getInstance().getLrpCollection();
 
         try (PrintWriter pw = new PrintWriter(new File(outdir, "settings_" + Oct.getInstance().getFileNameWithoutExtension() + ".csv"))) {
             //add lrp properties
@@ -36,6 +39,8 @@ public class ExportWriter {
             pw.println("distance unit" + "," + (lrpSettings.isDistanceUnitsInPixels() ? "pixels" : "microns"));
             pw.println(LrpSettings.PROP_LRP_SMOOTHING_FACTOR + "," + df.format(lrpSettings.getLrpSmoothingFactor()));
             pw.println(LrpSettings.PROP_NUMBER_OF_LRP + "," + String.valueOf(lrpSettings.getNumberOfLrp()));
+            pw.println("LRP center X positions,"
+                    + lrps.stream().map(Lrp::getLrpCenterXPosition).map(String::valueOf).collect(Collectors.joining(",")));
 
             //add oct properties
             pw.println(OctSettings.PROP_X_SCALE + "," + df.format(octSettings.getxScale()));
