@@ -8,8 +8,8 @@ package com.bwc.ora.views.toolbars;
 import com.bwc.ora.models.LrpSettings;
 import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.models.OctSettings;
-import java.awt.Component;
-import java.awt.GridBagLayout;
+
+import java.awt.*;
 import java.awt.event.ItemEvent;
 import java.util.ArrayList;
 import javax.swing.Box;
@@ -26,7 +26,6 @@ import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class OctSettingsPanel extends JPanel {
@@ -112,6 +111,7 @@ public class OctSettingsPanel extends JPanel {
         scalePanel = new JPanel();
         l = new JLabel("X Scale ");
         scalePanel.add(l);
+        octXScaleField.setColumns(6);
         l.setLabelFor(octXScaleField);
         scalePanel.add(octXScaleField);
         labelsList.add(scalePanel);
@@ -119,6 +119,7 @@ public class OctSettingsPanel extends JPanel {
         scalePanel = new JPanel();
         l = new JLabel("Y Scale ");
         scalePanel.add(l);
+        octYScaleField.setColumns(6);
         l.setLabelFor(octYScaleField);
         scalePanel.add(octYScaleField);
         componentsList.add(scalePanel);

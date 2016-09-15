@@ -173,9 +173,12 @@ public class Ora extends JFrame {
         add(settingsTabPane);
 
         //add toolbars to managed views for interacting with elsewhere in the application
+        // note that the order these are added to the collection must match the order they are added to the tab pane
         ViewsCollection viewsCollection = Collections.getInstance().getViewsCollection();
-        viewsCollection.add(lrpSettingsPanel);
         viewsCollection.add(octSettingsPanel);
+        viewsCollection.add(lrpSettingsPanel);
+        viewsCollection.add(controlsPanel);
+        viewsCollection.setSettingsTabPane(settingsTabPane);
 
         //ready for display of the window.
         pack();

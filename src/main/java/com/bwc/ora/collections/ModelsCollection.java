@@ -42,5 +42,10 @@ public class ModelsCollection {
     public DisplaySettings getDisplaySettings() {
         return displaySettings;
     }
-    
+
+    public void resetSettingsToDefault(){
+        lrpSettings.resetToDefaultSettings();
+        octSettings.resetToDefaultSettings();
+        displaySettings.resetToDefaultSettings();
+    }
 }

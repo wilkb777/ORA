@@ -8,6 +8,7 @@ package com.bwc.ora.views.toolbars;
 import com.bwc.ora.OraUtils;
 import com.bwc.ora.models.LrpSettings;
 import com.bwc.ora.collections.ModelsCollection;
+
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
@@ -29,7 +30,6 @@ import javax.swing.JSlider;
 import javax.swing.SwingConstants;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class LrpSettingsPanel extends JPanel {
@@ -133,6 +133,7 @@ public class LrpSettingsPanel extends JPanel {
         componentsList.add(ToolbarUtilities.getPanelWithSliderAndTextField(lrpSmoothingFactorField, lrpSmoothingSlider));
 
         labelsList.add(new JLabel());
+        runAnalysisButton.setEnabled(false);
         componentsList.add(runAnalysisButton);
 
         //add labels and inputs to left column
@@ -191,7 +192,7 @@ public class LrpSettingsPanel extends JPanel {
             }
         });
 
-        lrpSeparationDistanceField.addPropertyChangeListener("value", evt -> settings.setLrpSmoothingFactor((int) evt.getNewValue()));
+        lrpSeparationDistanceField.addPropertyChangeListener("value", evt -> settings.setLrpSeperationDistance((double) evt.getNewValue()));
         settings.addPropertyChangeListener(evt -> {
             if (LrpSettings.PROP_LRP_SEPERATION_DISTANCE.equals(evt.getPropertyName())) {
                 lrpSeparationDistanceField.setValue(evt.getNewValue());
@@ -224,12 +225,13 @@ public class LrpSettingsPanel extends JPanel {
             int option = JOptionPane.showOptionDialog(null, "Anchor method to use?",
                     "Anchoring", JOptionPane.YES_NO_OPTION,
                     JOptionPane.QUESTION_MESSAGE, null,
-                    new Object[]{"Assisted Fovea Finding", "Manual"}, "Assisted Fovea Finding");
+                    new Object[]{"Assisted Fovea Finding", "Manual"}, "Manual");
             switch (option) {
                 case JOptionPane.YES_OPTION:
                     break;
                 case JOptionPane.NO_OPTION:
                     OraUtils.generateAnchorLrp(false);
+                    runAnalysisButton.setEnabled(true);
                     break;
                 default:
                     break;
@@ -242,4 +244,7 @@ public class LrpSettingsPanel extends JPanel {
 
     }
 
+    public void disableRunAnalysisButton() {
+        runAnalysisButton.setEnabled(false);
+    }
 }

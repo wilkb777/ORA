@@ -63,4 +63,10 @@ public class Collections {
         return octDrawnPointCollection;
     }
 
+    public void resetCollectionsForNewAnalysis(){
+        viewsCollection.enableViewsInputs();
+        viewsCollection.setOctSettingsAsSelectedTab();
+        lrpCollection.clearLrps();
+        octDrawnPointCollection.clear();
+    }
 }

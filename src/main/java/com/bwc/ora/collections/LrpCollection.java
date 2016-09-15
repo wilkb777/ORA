@@ -66,7 +66,6 @@ public class LrpCollection extends JList<Lrp> {
 
     public Stream<Lrp> streamSelected() {
         Lrp selected = getSelectedValue();
-        System.out.println("Is selected null? " + (selected == null));
         if (selected == null) {
             return Stream.empty();
         } else {

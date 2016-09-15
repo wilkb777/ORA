@@ -14,6 +14,7 @@ import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.models.OctSettings;
 import com.bwc.ora.models.RetinalBand;
 import com.bwc.ora.views.render.HighlightXYRenderer;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
@@ -30,10 +31,8 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.ListSelectionEvent;
-import org.jfree.chart.ChartFactory;
-import org.jfree.chart.ChartMouseEvent;
-import org.jfree.chart.ChartMouseListener;
-import org.jfree.chart.ChartPanel;
+
+import org.jfree.chart.*;
 import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.chart.axis.NumberAxis;
 import org.jfree.chart.axis.ValueAxis;
@@ -47,7 +46,6 @@ import org.jfree.data.xy.XYSeriesCollection;
 import org.jfree.ui.TextAnchor;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class LrpDisplayFrame extends JFrame {
@@ -58,6 +56,8 @@ public class LrpDisplayFrame extends JFrame {
     private final OctSettings octSettings = ModelsCollection.getInstance().getOctSettings();
     private final ChartPanel chartPanel;
     private XYSeries lrpSeries = null, maximaSeries = null, hiddenMaximaSeries = null;
+    private XYSeriesCollection graphData;
+    private ChartMouseListener mouseMovementListener = null;
 
     private LrpDisplayFrame() {
         //set up frame and chart
@@ -103,6 +103,30 @@ public class LrpDisplayFrame extends JFrame {
                 }
             }
         });
+
+        //add mouse listener for chart to detect when to display labels for
+        //peaks in the pop-up menu, also specify what to do when label is clicked
+        chartPanel.addChartMouseListener(new ChartMouseListener() {
+
+            @Override
+            public void chartMouseClicked(ChartMouseEvent cme) {
+                ChartEntity entity = cme.getEntity();
+                if (entity instanceof XYItemEntity
+                        && cme.getTrigger().getButton() == MouseEvent.BUTTON1) {
+
+                    XYItemEntity item = (XYItemEntity) entity;
+                    LabelPopupMenu labelMenu = new LabelPopupMenu(chartPanel, item, lrps.getSelectedValue());
+
+                    labelMenu.show(chartPanel, cme.getTrigger().getX(), cme.getTrigger().getY());
+                }
+            }
+
+            @Override
+            public void chartMouseMoved(ChartMouseEvent cme) {
+                //do nothing
+            }
+
+        });
     }
 
     public static LrpDisplayFrame getInstance() {
@@ -118,7 +142,7 @@ public class LrpDisplayFrame extends JFrame {
         lrpSeries = series.getLrpSeries();
         maximaSeries = series.getMaximaSeries();
         hiddenMaximaSeries = series.getHiddenMaximaSeries();
-        XYSeriesCollection graphData = new XYSeriesCollection();
+        graphData = new XYSeriesCollection();
 
         //add series data to graph
         graphData.addSeries(lrpSeries);
@@ -127,16 +151,16 @@ public class LrpDisplayFrame extends JFrame {
         series.getFwhmSeries().forEach(graphData::addSeries);
 
         //create the chart for displaying the data
-        chartPanel.setChart(
-                ChartFactory.createXYLineChart(
-                        "LRP",
-                        "Pixel Height",
-                        "Reflectivity",
-                        graphData,
-                        PlotOrientation.HORIZONTAL,
-                        true,
-                        true,
-                        false));
+        JFreeChart chart = ChartFactory.createXYLineChart(
+                "LRP",
+                "Pixel Height",
+                "Reflectivity",
+                graphData,
+                PlotOrientation.HORIZONTAL,
+                true,
+                true,
+                false);
+        chartPanel.setChart(chart);
 
         //create a custom renderer to control the display of each series
         //set draw properties for the LRP data
@@ -170,21 +194,80 @@ public class LrpDisplayFrame extends JFrame {
             renderer.setSeriesVisibleInLegend(i, false, false);
         }
 
-        //add mouse listener for chart to detect when to display labels for
-        //peaks in the pop-up menu, also specify what to do when label is clicked
-        chartPanel.addChartMouseListener(new ChartMouseListener() {
+        chart.getXYPlot().setRenderer(renderer);
+
+        //add listener for highlighting points when hovered over
+        if (mouseMovementListener != null) {
+            chartPanel.removeChartMouseListener(mouseMovementListener);
+        }
+        mouseMovementListener = getMovementChartMouseListener(renderer);
+        chartPanel.addChartMouseListener(mouseMovementListener);
+
+        //mark the Domain (which appears as the range in a horizontal graph) 
+        // axis as inverted so LRP matches with OCT
+        ValueAxis domainAxis = chart.getXYPlot().getDomainAxis();
+        if (domainAxis instanceof NumberAxis) {
+            NumberAxis axis = (NumberAxis) domainAxis;
+            axis.setInverted(true);
+        }
+
+        //disable the need for the range of the chart to include zero
+        ValueAxis rangeAxis = chart.getXYPlot().getRangeAxis();
+        if (rangeAxis instanceof NumberAxis) {
+            NumberAxis axis = (NumberAxis) rangeAxis;
+            axis.setAutoRangeIncludesZero(false);
+        }
+
+        //if there were any previous annotations to the LRP add them to the chart
+        lrps.getSelectedValue()
+                .getAnnotations()
+                .forEach(chart.getXYPlot()::addAnnotation);
+    }
+
+    private void updateSeries(LrpSeries series) {
+        graphData.removeAllSeries();
+
+        graphData.addSeries(this.lrpSeries);
+        graphData.addSeries(this.maximaSeries);
+        graphData.addSeries(this.hiddenMaximaSeries);
+
+        this.lrpSeries.clear();
+        ((List<XYDataItem>) (Object) series.getLrpSeries().getItems()).forEach(item -> {
+            this.lrpSeries.add(item, false);
+        });
+        this.lrpSeries.fireSeriesChanged();
+
+        this.maximaSeries.clear();
+        ((List<XYDataItem>) (Object) series.getMaximaSeries().getItems()).forEach(item -> {
+            this.maximaSeries.add(item, false);
+        });
+        this.maximaSeries.fireSeriesChanged();
+
+        this.hiddenMaximaSeries.clear();
+        ((List<XYDataItem>) (Object) series.getHiddenMaximaSeries().getItems()).forEach(item -> {
+            this.hiddenMaximaSeries.add(item, false);
+        });
+        this.hiddenMaximaSeries.fireSeriesChanged();
+
+        series.getFwhmSeries().forEach(graphData::addSeries);
+
+        //set draw properties of the for each of the full-width half-max lines
+        for (int i = 3; i < series.getFwhmSeries().size() + 3; i++) {
+            XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
+            renderer.setSeriesLinesVisible(i, true);
+            renderer.setSeriesShapesVisible(i, false);
+            renderer.setSeriesPaint(i, Color.BLACK);
+            renderer.setSeriesVisibleInLegend(i, false, false);
+            chartPanel.getChart().getXYPlot().setRenderer(i, renderer);
+        }
+    }
+
+    private ChartMouseListener getMovementChartMouseListener(HighlightXYRenderer renderer) {
+        return new ChartMouseListener() {
 
             @Override
             public void chartMouseClicked(ChartMouseEvent cme) {
-                ChartEntity entity = cme.getEntity();
-                if (entity instanceof XYItemEntity
-                        && cme.getTrigger().getButton() == MouseEvent.BUTTON1) {
-
-                    XYItemEntity item = (XYItemEntity) entity;
-                    LabelPopupMenu labelMenu = new LabelPopupMenu(chartPanel, item, lrps.getSelectedValue());
-
-                    labelMenu.show(chartPanel, cme.getTrigger().getX(), cme.getTrigger().getY());
-                }
+                //do nothing
             }
 
             @Override
@@ -197,77 +280,13 @@ public class LrpDisplayFrame extends JFrame {
                     XYItemEntity xyent = (XYItemEntity) entity;
                     renderer.setHighlightedItem(xyent.getSeriesIndex(), xyent.getItem());
                     int x = lrps.getSelectedValue().getLrpCenterXPosition();
-                    //get the Y value of the item on the LRP (in the case of 
+                    //get the Y value of the item on the LRP (in the case of
                     // the graph this is the X value since the orientation of the plot is flipped)
                     int y = (int) Math.round(xyent.getDataset().getXValue(xyent.getSeriesIndex(), xyent.getItem()));
                     octDrawnPointsCollection.add(new OctDrawnPoint("Peak", new Point(x, y)));
                 }
             }
 
-        });
-
-        chartPanel.getChart().getXYPlot().setRenderer(renderer);
-
-        //mark the Domain (which appears as the range in a horizontal graph) 
-        // axis as inverted so LRP matches with OCT
-        ValueAxis domainAxis = chartPanel.getChart().getXYPlot().getDomainAxis();
-        if (domainAxis instanceof NumberAxis) {
-            NumberAxis axis = (NumberAxis) domainAxis;
-            axis.setInverted(true);
-        }
-
-        //disable the need for the range of the chart to include zero
-        ValueAxis rangeAxis = chartPanel.getChart().getXYPlot().getRangeAxis();
-        if (rangeAxis instanceof NumberAxis) {
-            NumberAxis axis = (NumberAxis) rangeAxis;
-            axis.setAutoRangeIncludesZero(false);
-        }
-
-        //if there were any previous annotations to the LRP add them to the chart
-        lrps.getSelectedValue()
-                .getAnnotations()
-                .forEach(chartPanel.getChart().getXYPlot()::addAnnotation);
-    }
-
-    private void updateSeries(LrpSeries lrpSeries) {
-        this.lrpSeries.clear();
-        ((List<XYDataItem>) (Object) lrpSeries.getLrpSeries().getItems()).forEach(item -> {
-            this.lrpSeries.add(item, false);
-        });
-        this.lrpSeries.fireSeriesChanged();
-
-        this.maximaSeries.clear();
-        ((List<XYDataItem>) (Object) lrpSeries.getMaximaSeries().getItems()).forEach(item -> {
-            this.maximaSeries.add(item, false);
-        });
-        this.maximaSeries.fireSeriesChanged();
-
-        this.hiddenMaximaSeries.clear();
-        ((List<XYDataItem>) (Object) lrpSeries.getHiddenMaximaSeries().getItems()).forEach(item -> {
-            this.hiddenMaximaSeries.add(item, false);
-        });
-        this.hiddenMaximaSeries.fireSeriesChanged();
-
-        XYSeriesCollection graphData = (XYSeriesCollection) chartPanel.getChart().getXYPlot().getDataset();
-        for (int i = 3; i < graphData.getSeriesCount(); i++) {
-            graphData.removeSeries(i);
-        }
-        lrpSeries.getFwhmSeries().forEach(fwhmSeries -> {
-            try {
-                graphData.addSeries(fwhmSeries);
-            } catch (IllegalArgumentException e) {
-                //thrown when duplicate FWHM is calculated for some strange reason
-                //just ignore failure
-            }
-        });
-        //set draw properties of the for each of the full-width half-max lines
-        for (int i = 3; i < lrpSeries.getFwhmSeries().size() + 3; i++) {
-            XYLineAndShapeRenderer renderer = new XYLineAndShapeRenderer();
-            renderer.setSeriesLinesVisible(i, true);
-            renderer.setSeriesShapesVisible(i, false);
-            renderer.setSeriesPaint(i, Color.BLACK);
-            renderer.setSeriesVisibleInLegend(i, false, false);
-            chartPanel.getChart().getXYPlot().setRenderer(i, renderer);
-        }
+        };
     }
 }

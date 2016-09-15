@@ -17,7 +17,7 @@ import java.util.LinkedList;
  */
 public class OctDrawnPointCollection extends LinkedList<OctDrawnPoint> {
 
-    ArrayList<OctDrawnPointCollectionEventListener> listenerList = new ArrayList<>();
+    private ArrayList<OctDrawnPointCollectionEventListener> listenerList = new ArrayList<>();
 
     @Override
     public void clear() {

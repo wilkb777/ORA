@@ -48,6 +48,8 @@ public class OraUtils {
         try {
             //read in image and ready for analysis
             OraUtils.loadOctFromTiffFile(new File(OraUtils.class.getClassLoader().getResource("KS_10238_OS_L_7_90_05_529disp_reg_fr1-25_AL21p35.tif").toURI()), Oct.getInstance());
+            Collections.getInstance().resetCollectionsForNewAnalysis();
+            ModelsCollection.getInstance().resetSettingsToDefault();
         } catch (IOException | URISyntaxException ex) {
             JOptionPane.showMessageDialog(null, "Image loading failed,"
                     + " reason: " + ex.getMessage(), "Loading error!", JOptionPane.ERROR_MESSAGE
@@ -61,6 +63,8 @@ public class OraUtils {
             File tiffFile = OraUtils.selectFile(null, JFileChooser.FILES_ONLY, "Log OCT", "TIFF file", "tiff", "tif");
             if (tiffFile != null) {
                 OraUtils.loadOctFromTiffFile(tiffFile, Oct.getInstance());
+                Collections.getInstance().resetCollectionsForNewAnalysis();
+                ModelsCollection.getInstance().resetSettingsToDefault();
             }
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Image loading failed,"
@@ -230,8 +234,12 @@ public class OraUtils {
 
     public static void runAnalysis() {
         System.out.println("Disabling panels...");
+
         //disable settings panels so no changes to the settings can be made
         Collections.getInstance().getViewsCollection().disableViewsInputs();
+
+        //move to analysis tab
+        Collections.getInstance().getViewsCollection().setAnalysisTabAsSelectedTab();
 
         /*
          Based on the current settings generate the approriate number of LRPs for the user to analyze

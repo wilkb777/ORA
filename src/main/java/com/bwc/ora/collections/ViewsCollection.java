@@ -6,20 +6,38 @@
 package com.bwc.ora.collections;
 
 import com.bwc.ora.OraUtils;
+import com.bwc.ora.views.toolbars.AnalysisPanel;
+import com.bwc.ora.views.toolbars.LrpSettingsPanel;
+import com.bwc.ora.views.toolbars.OctSettingsPanel;
+
 import java.util.ArrayList;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class ViewsCollection extends ArrayList<JPanel> {
 
-    ViewsCollection(int initialCapacity) {
-        super(initialCapacity);
+    private JTabbedPane settingsTabPane;
+
+    public void setSettingsTabPane(JTabbedPane settingsTabPane) {
+        this.settingsTabPane = settingsTabPane;
     }
 
-    ViewsCollection() {
+    public void setOctSettingsAsSelectedTab() {
+        int i = 0;
+        for (; i < size(); i++) {
+            if (get(i) instanceof OctSettingsPanel) break;
+        }
+        settingsTabPane.setSelectedIndex(i);
+    }
+
+    public void setAnalysisTabAsSelectedTab() {
+        int i = 0;
+        for (; i < size(); i++) {
+            if (get(i) instanceof AnalysisPanel) break;
+        }
+        settingsTabPane.setSelectedIndex(i);
     }
 
     /**
@@ -27,7 +45,9 @@ public class ViewsCollection extends ArrayList<JPanel> {
      * with this collections.
      */
     public void disableViewsInputs() {
-        forEach(container -> OraUtils.setEnabled(container, false));
+        stream()
+                .filter(container -> !(container instanceof AnalysisPanel))
+                .forEach(container -> OraUtils.setEnabled(container, false));
     }
 
     /**
@@ -35,7 +55,12 @@ public class ViewsCollection extends ArrayList<JPanel> {
      * with this collections.
      */
     public void enableViewsInputs() {
-        forEach(container -> OraUtils.setEnabled(container, true));
+        forEach(container -> {
+            OraUtils.setEnabled(container, true);
+            if (container instanceof LrpSettingsPanel) {
+                ((LrpSettingsPanel) container).disableRunAnalysisButton();
+            }
+        });
     }
 
 }

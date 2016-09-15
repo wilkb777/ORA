@@ -117,8 +117,10 @@ public class ExportWriter {
 
     public static void exportAnalysis(File outputLocation) throws FileNotFoundException {
         File analysisOutdir = new File(outputLocation, "analysis_" + Oct.getInstance().getFileNameWithoutExtension());
-        if (!analysisOutdir.mkdir()) {
-            throw new IllegalArgumentException("Can't create output in specified location");
+        if (!analysisOutdir.exists()) {
+            if (!analysisOutdir.mkdir()) {
+                throw new IllegalArgumentException("Can't create output in specified location");
+            }
         }
 
         writeFwhmCsvs(analysisOutdir);
