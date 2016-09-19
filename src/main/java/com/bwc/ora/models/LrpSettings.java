@@ -6,12 +6,12 @@
 package com.bwc.ora.models;
 
 import com.bwc.ora.collections.ModelsCollection;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.Arrays;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class LrpSettings {
@@ -21,7 +21,7 @@ public class LrpSettings {
 
     private transient final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
-    private final Integer[] lrpWidthOptions = new Integer[]{1, 3, 5, 7, 9, 11};
+    private final Integer[] lrpWidthOptions = new Integer[]{1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25};
     private final int[] lrpSmoothingRange = new int[]{0, 50};
     private int lrpWidth = 5;
     public static final String PROP_LRP_WIDTH = "lrpWidth";
@@ -44,7 +44,7 @@ public class LrpSettings {
         setLrpSeperationDistance(300D);
         setDistanceUnitsInPixels(false);
     }
-    
+
     /**
      * Convenience method for getting the separation distance between LRPs
      * regardless of the distance units specified by the user.

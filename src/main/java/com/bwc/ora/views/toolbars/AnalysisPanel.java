@@ -7,6 +7,7 @@ package com.bwc.ora.views.toolbars;
 
 import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.LrpCollection;
+
 import java.awt.BorderLayout;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -15,13 +16,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class AnalysisPanel extends JPanel {
 
     private final JButton nextLrpButton = new JButton("Next LRP");
     private final JButton prevLrpButton = new JButton("Previous LRP");
+    private final JButton restartButton = new JButton("Restart Analysis");
     private final JScrollPane analysisNavPane = new JScrollPane(Collections.getInstance().getLrpCollection());
     private final String title = "Analysis Controls";
 
@@ -37,6 +38,8 @@ public class AnalysisPanel extends JPanel {
         buttonPanel.add(prevLrpButton);
         buttonPanel.add(Box.createHorizontalStrut(5));
         buttonPanel.add(nextLrpButton);
+        buttonPanel.add(Box.createHorizontalStrut(5));
+        buttonPanel.add(restartButton);
 
         //add componenets to the panel for display
         add(buttonPanel, BorderLayout.PAGE_START);
@@ -51,6 +54,7 @@ public class AnalysisPanel extends JPanel {
         //connect next and previous buttons for navigation during analysis
         nextLrpButton.addActionListener(evt -> lrpCollection.selectNextLrp());
         prevLrpButton.addActionListener(evt -> lrpCollection.selectPrevLrp());
+        restartButton.addActionListener(evt -> Collections.getInstance().resetCollectionsForNewAnalysis());
     }
 
     public String getTitle() {

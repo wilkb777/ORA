@@ -230,8 +230,7 @@ public class LrpSettingsPanel extends JPanel {
                 case JOptionPane.YES_OPTION:
                     break;
                 case JOptionPane.NO_OPTION:
-                    OraUtils.generateAnchorLrp(false);
-                    runAnalysisButton.setEnabled(true);
+                    OraUtils.generateAnchorLrp(false, runAnalysisButton);
                     break;
                 default:
                     break;

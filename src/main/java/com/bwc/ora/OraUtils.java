@@ -28,8 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.swing.JFileChooser;
-import javax.swing.JOptionPane;
+import javax.swing.*;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
@@ -147,7 +146,7 @@ public class OraUtils {
      * @param assisted use fovea finding algorithm or manual click to identify
      *                 fovea
      */
-    public static void generateAnchorLrp(boolean assisted) {
+    public static void generateAnchorLrp(boolean assisted, JButton buttonToEnable) {
         OCTDisplayPanel lrpPanel = OCTDisplayPanel.getInstance();
         LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
         if (assisted) {
@@ -169,6 +168,7 @@ public class OraUtils {
                         ));
                         lrpCollection.setSelectedIndex(0);
                         lrpPanel.removeMouseListener(this);
+                        if (buttonToEnable != null) buttonToEnable.setEnabled(true);
                     }
                 }
             });
@@ -236,14 +236,14 @@ public class OraUtils {
 
     public static void runAnalysis() {
         OctSettings octSettings = ModelsCollection.getInstance().getOctSettings();
-        if (!(octSettings.getyScale() > 0 && octSettings.getxScale() > 0)){
+        if (!(octSettings.getyScale() > 0 && octSettings.getxScale() > 0)) {
             throw new IllegalArgumentException("X and Y scale must be positive, non-zero decimal numbers.");
         }
 
         /*
          Based on the current settings generate the appropriate number of LRPs for the user to analyze
          */
-            setLrpsForAnalysis();
+        setLrpsForAnalysis();
 
         //disable settings panels so no changes to the settings can be made
         Collections.getInstance().getViewsCollection().disableViewsInputs();
