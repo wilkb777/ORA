@@ -5,8 +5,10 @@
  */
 package com.bwc.ora.collections;
 
+import com.bwc.ora.models.ScaleBar;
 import com.bwc.ora.views.OCTOverlay;
 import com.bwc.ora.views.OctDrawnPoint;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.stream.Stream;
@@ -14,7 +16,6 @@ import javax.swing.JList;
 import javax.swing.ListSelectionModel;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class Collections {
@@ -22,6 +23,7 @@ public class Collections {
     private final LrpCollection lrpCollection;
     private final ViewsCollection viewsCollection;
     private final OctDrawnPointCollection octDrawnPointCollection;
+    private final ModelsCollection modelsCollection = ModelsCollection.getInstance();
 
     private Collections() {
         //initialize the lrp collection and set display settings
@@ -49,10 +51,12 @@ public class Collections {
     }
 
     public Stream<OCTOverlay> getOverlaysStream() {
-        return Stream.concat(
-                lrpCollection.streamSelected(),
-                octDrawnPointCollection.stream()
-        );
+        return Stream
+                .of(
+                        lrpCollection.streamSelected(),
+                        octDrawnPointCollection.stream(),
+                        Stream.of(modelsCollection.getScaleBar()))
+                .flatMap(stream -> stream);
     }
 
     public ViewsCollection getViewsCollection() {
@@ -63,7 +67,7 @@ public class Collections {
         return octDrawnPointCollection;
     }
 
-    public void resetCollectionsForNewAnalysis(){
+    public void resetCollectionsForNewAnalysis() {
         viewsCollection.enableViewsInputs();
         viewsCollection.setOctSettingsAsSelectedTab();
         lrpCollection.clearLrps();

@@ -9,7 +9,6 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class DisplaySettings {
@@ -22,12 +21,16 @@ public class DisplaySettings {
     public static final String PROP_SHOW_FWHM_ON_LRP = "showFwhmOnLrp";
     private boolean displayScaleBarsOnOct = true;
     public static final String PROP_DISPLAY_SCALE_BARS_ON_OCT = "displayScaleBarsOnOct";
+    private int scaleBarEdgeBufferWidth = 20;
+    public static final String PROP_SCALE_BAR_EDGE_BUFFER_WIDTH = "scaleBarEdgeBufferWidth";
+
 
     public void resetToDefaultSettings() {
         setDisplayFileName(true);
         setShowFwhmOnLrp(false);
         setShowLrpPeaks(true);
         setDisplayScaleBarsOnOct(true);
+        setScaleBarEdgeBufferWidth(20);
     }
 
     /**
@@ -110,6 +113,26 @@ public class DisplaySettings {
         propertyChangeSupport.firePropertyChange(PROP_DISPLAY_FILE_NAME, oldDisplayFileName, displayFileName);
     }
 
+    /**
+     * Get the distance between the edge of the image and the scale bars.
+     *
+     * @return
+     */
+    public int getScaleBarEdgeBufferWidth() {
+        return scaleBarEdgeBufferWidth;
+    }
+
+    /**
+     * Set the distance between the edge of the image and the scale bars. Fires a property change event to all listeners.
+     *
+     * @param scaleBarEdgeBufferWidth
+     */
+    public void setScaleBarEdgeBufferWidth(int scaleBarEdgeBufferWidth) {
+        int oldWidth = this.scaleBarEdgeBufferWidth;
+        this.scaleBarEdgeBufferWidth = scaleBarEdgeBufferWidth;
+        propertyChangeSupport.firePropertyChange(PROP_SCALE_BAR_EDGE_BUFFER_WIDTH, oldWidth, scaleBarEdgeBufferWidth);
+    }
+
     private transient final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
     /**
@@ -129,5 +152,4 @@ public class DisplaySettings {
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
-
 }

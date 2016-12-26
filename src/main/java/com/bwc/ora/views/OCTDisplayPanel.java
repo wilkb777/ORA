@@ -20,6 +20,7 @@ import ij.ImagePlus;
 import ij.process.ImageConverter;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Set;
 import javax.swing.ImageIcon;
@@ -48,14 +49,13 @@ public class OCTDisplayPanel extends JLabel {
         setAlignmentX(CENTER_ALIGNMENT);
 
         //register listener for changes to Oct for auto update on change
-        oct.addPropertyChangeListener(evt -> {
-            updateDisplay(false);
-        });
+        oct.addPropertyChangeListener(evt -> updateDisplay(false));
 
         //register listeners for changes to display settings for auto update on change
         dispSettings.addPropertyChangeListener(evt -> {
             switch (evt.getPropertyName()) {
                 case DisplaySettings.PROP_DISPLAY_SCALE_BARS_ON_OCT:
+                case DisplaySettings.PROP_SCALE_BAR_EDGE_BUFFER_WIDTH:
                     updateDisplay(true);
                 default:
                     break;
@@ -83,7 +83,7 @@ public class OCTDisplayPanel extends JLabel {
 
         //add listener to check to see if LRP selection should be displayed 
         lrps.addListSelectionListener((ListSelectionEvent e) -> {
-            if (e.getValueIsAdjusting() == false) {
+            if (!e.getValueIsAdjusting()) {
                 updateDisplay(true);
             }
         });
@@ -138,18 +138,9 @@ public class OCTDisplayPanel extends JLabel {
 
         //order overlay layers and draw to image accordingly
         collections.getOverlaysStream()
-                .map(lrp -> {
-//                    System.out.println("Streaming overlay, draw LRP? " + (lrp.display()));
-                    return lrp;
-                })
                 .filter(OCTOverlay::display)
-                .sorted((OCTOverlay o1, OCTOverlay o2) -> {
-                    return Integer.compare(o1.getZValue(), o2.getZValue());
-                })
-                .forEach((OCTOverlay overlay) -> {
-//                    System.out.println("Drawing overlay...");
-                    overlay.drawOverlay(octBase);
-                });
+                .sorted(Comparator.comparingInt(OCTOverlay::getZValue))
+                .forEach((OCTOverlay overlay) -> overlay.drawOverlay(octBase));
         //finally set image to be drawn to the screen
         setIcon(new ImageIcon(octBase));
         //notify listeners that the Panel has updated the image
