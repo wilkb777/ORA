@@ -10,7 +10,6 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class ChangeSupport {
@@ -20,11 +19,11 @@ public class ChangeSupport {
     public ChangeSupport(JComponent listeningComponent) {
         this.listeningComponent = listeningComponent;
     }
-    
-    public void fireStateChanged() {
+
+    public void fireStateChanged(ChangeEvent evt) {
         ChangeListener[] listeners = listeningComponent.getListeners(ChangeListener.class);
         if (listeners != null && listeners.length > 0) {
-            ChangeEvent evt = new ChangeEvent(listeningComponent);
+            evt = (evt == null) ? new ChangeEvent(listeningComponent) : evt;
             for (ChangeListener listener : listeners) {
                 listener.stateChanged(evt);
             }

@@ -54,13 +54,13 @@ public class OctSettingsPanel extends JPanel {
         this.octLogDisplay = new JRadioButton("Logarithmic", true);
         this.octLogLinearDisplayButtonGroup = new ButtonGroup();
         this.octSmoothingFactorField = new ToolbarTextField(settings.getSmoothingFactor());
-        int[] range = settings.getSmoothingFactorSliderRange();
+        int[] range = OctSettings.getSmoothingFactorSliderRange();
         this.octSmoothingFactorSlider = new JSlider(SwingConstants.HORIZONTAL, range[0], range[1], (int) Math.round(settings.getSmoothingFactor() / OctSettings.getSmoothingFactorSliderMultiplier()));
         this.octSharpenWeightField = new ToolbarTextField(settings.getSharpenWeight());
-        range = settings.getSharpenWeightSliderRange();
+        range = OctSettings.getSharpenWeightSliderRange();
         this.octSharpenWeightSlider = new JSlider(SwingConstants.HORIZONTAL, range[0], range[1], Math.round(settings.getSharpenWeight() / OctSettings.getSharpenWeightSliderMultiplier()));
         this.octSharpenKernelRadiusField = new ToolbarTextField(0D);
-        range = settings.getSharpenKernelRadiusSliderRange();
+        range = OctSettings.getSharpenKernelRadiusSliderRange();
         this.octSharpenKernelSlider = new JSlider(SwingConstants.HORIZONTAL, range[0], range[1], (int) Math.round(settings.getSharpenKernelRadius() / OctSettings.getSharpenKernelRadiusSliderMultiplier()));
         this.octXScaleField = new ToolbarTextField(0D);
         this.octYScaleField = new ToolbarTextField(0D);

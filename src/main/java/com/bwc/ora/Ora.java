@@ -20,26 +20,13 @@ import com.bwc.ora.views.LrpDisplayFrame;
 import com.bwc.ora.views.toolbars.AnalysisPanel;
 import com.bwc.ora.views.toolbars.ToolbarUtilities;
 
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.HeadlessException;
-import java.awt.Point;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.stream.Stream;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTabbedPane;
-import javax.swing.SwingUtilities;
-import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
@@ -75,7 +62,7 @@ public class Ora extends JFrame {
         super(title);
 
         //config container properties
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setMinimumSize(new Dimension(300, 50));
         setIconImage(new ImageIcon(getClass().getResource("/logo.png")).getImage());
         setLocationByPlatform(true);
@@ -146,13 +133,29 @@ public class Ora extends JFrame {
         });
 
         add(infoPanel);
-        add(Box.createVerticalStrut(4));
+        add(Box.createVerticalStrut(5));
+        add(Box.createVerticalGlue());
 
         //set up the image display
+        JScrollPane scrollPane = new JScrollPane(disp);
+        scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
         disp.addChangeListener((ChangeEvent e) -> {
-            pack();
+            GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+            if (e.getSource() instanceof PropertyChangeEvent
+                    && ((PropertyChangeEvent) e.getSource()).getPropertyName().equals(Oct.PROP_LOG_OCT)) {
+                int width = Oct.getInstance().getImageWidth() < 0.95D * (double) gd.getDisplayMode().getWidth() ?
+                        Oct.getInstance().getImageWidth() : (int) (0.95D * gd.getDisplayMode().getWidth());
+                int height = Oct.getInstance().getImageHeight() < 0.70D * (double) gd.getDisplayMode().getHeight() ?
+                        Oct.getInstance().getImageHeight() : (int) (0.70D * gd.getDisplayMode().getHeight());
+                scrollPane.setPreferredSize(new Dimension(width, height));
+                pack();
+            } else {
+                scrollPane.revalidate();
+            }
         });
-        add(disp);
+        add(scrollPane);
+        add(Box.createVerticalStrut(5));
+        add(Box.createVerticalGlue());
 
         //add settings tab pane
         JTabbedPane settingsTabPane = new JTabbedPane(JTabbedPane.LEFT);
@@ -182,6 +185,12 @@ public class Ora extends JFrame {
 
         //ready for display of the window.
         pack();
+
+        //limit height of the info bar
+        infoPanel.setMaximumSize(new Dimension((int) infoPanel.getMaximumSize().getWidth(), infoPanel.getHeight()));
+
+        //limit height of the analysis tabs
+        settingsTabPane.setMaximumSize(new Dimension((int) settingsTabPane.getMaximumSize().getWidth(), settingsTabPane.getHeight()));
     }
 
 }

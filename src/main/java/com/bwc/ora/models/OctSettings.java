@@ -10,12 +10,12 @@ import com.bwc.ora.ip.ContrastAdjust;
 import com.bwc.ora.ip.FilterOperation;
 import com.bwc.ora.ip.NoiseReduction;
 import com.bwc.ora.ip.Sharpen;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.ArrayList;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class OctSettings {
@@ -28,15 +28,15 @@ public class OctSettings {
     public static final String PROP_APPLY_CONTRAST_ADJUSTMENT = "applyContrastAdjustment";
     private boolean displayLogOct = true;
     public static final String PROP_DISPLAY_LOG_OCT = "displayLogOct";
-    private final int[] smoothingFactorSliderRange = new int[]{0, 50};
+    private static final int[] smoothingFactorSliderRange = new int[]{0, 50};
     private static final double smoothingFactorSliderMultiplier = 0.1D;
     private double smoothingFactor = 0D;
     public static final String PROP_SMOOTHING_FACTOR = "smoothingFactor";
-    private final int[] sharpenWeightSliderRange = new int[]{0, 100};
+    private static final int[] sharpenWeightSliderRange = new int[]{0, 100};
     private static final float sharpenWeightSliderMultiplier = 0.01F;
     private float sharpenWeight = 0F;
     public static final String PROP_SHARPEN_WEIGHT = "sharpenWeight";
-    private final int[] sharpenKernelRadiusSliderRange = new int[]{0, 200};
+    private static final int[] sharpenKernelRadiusSliderRange = new int[]{0, 200};
     private static final double sharpenKernelRadiusSliderMultiplier = 0.1D;
     private double sharpenKernelRadius = 0D;
     public static final String PROP_SHARPEN_KERNEL_RADIUS = "sharpenKernelRadius";
@@ -44,7 +44,11 @@ public class OctSettings {
     public static final String PROP_X_SCALE = "xScale";
     private double yScale = 0D; //microns per pixel
     public static final String PROP_Y_SCALE = "yScale";
-    
+    private double zoom = 1D;
+    public static final String PROP_ZOOM = "zoom";
+    private static final int[] zoomSliderRange = new int[]{1, 50};
+
+
     public void resetToDefaultSettings() {
         setApplyNoiseReduction(false);
         setApplyContrastAdjustment(false);
@@ -68,15 +72,15 @@ public class OctSettings {
         return sharpenKernelRadiusSliderMultiplier;
     }
 
-    public int[] getSmoothingFactorSliderRange() {
+    public static int[] getSmoothingFactorSliderRange() {
         return smoothingFactorSliderRange;
     }
 
-    public int[] getSharpenWeightSliderRange() {
+    public static int[] getSharpenWeightSliderRange() {
         return sharpenWeightSliderRange;
     }
 
-    public int[] getSharpenKernelRadiusSliderRange() {
+    public static int[] getSharpenKernelRadiusSliderRange() {
         return sharpenKernelRadiusSliderRange;
     }
 
