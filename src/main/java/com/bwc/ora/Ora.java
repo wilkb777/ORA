@@ -137,8 +137,9 @@ public class Ora extends JFrame {
         add(Box.createVerticalGlue());
 
         //set up the image display
-        JScrollPane scrollPane = new JScrollPane(disp);
-        scrollPane.setAlignmentX(Component.CENTER_ALIGNMENT);
+        JPanel tmpPanel = new JPanel(new GridBagLayout());
+        tmpPanel.add(disp);
+        JScrollPane scrollPane = new JScrollPane(tmpPanel);
         disp.addChangeListener((ChangeEvent e) -> {
             GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             if (e.getSource() instanceof PropertyChangeEvent
