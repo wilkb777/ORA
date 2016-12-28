@@ -58,7 +58,7 @@ public class LrpSettingsPanel extends JPanel {
         this.numLrpField = new ToolbarTextField(settings.getNumberOfLrp());
         this.lrpSmoothingFactorField = new ToolbarTextField(settings.getLrpSmoothingFactor());
         int[] range = settings.getLrpSmoothingRange();
-        this.lrpSmoothingSlider = new JSlider(SwingConstants.HORIZONTAL, range[0], range[1], (int) settings.getLrpSmoothingFactor());
+        this.lrpSmoothingSlider = new JSlider(SwingConstants.HORIZONTAL, range[0], range[1], settings.getLrpSmoothingFactor());
         this.lrpWidthField = new JComboBox<>(settings.getLrpWidthOptions());
         this.lrpWidthField.setSelectedItem(settings.getLrpWidth());
         this.runAnalysisButton = new JButton("Run Analysis");

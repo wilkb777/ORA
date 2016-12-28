@@ -70,7 +70,7 @@ public class LrpDisplayFrame extends JFrame {
 
         //add listener to check to see which LRP should be displayed
         lrps.addListSelectionListener((ListSelectionEvent e) -> {
-            if (e.getValueIsAdjusting() == false) {
+            if (!e.getValueIsAdjusting()) {
                 if (lrps.getSelectedIndex() > -1) {
                     setChart(lrps.getSelectedValue().getAllSeriesData());
                     setVisible(true);

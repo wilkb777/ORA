@@ -8,6 +8,7 @@ package com.bwc.ora.models;
 import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.ip.ImageUtils;
 import com.bwc.ora.views.OCTOverlay;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -17,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.stream.IntStream;
+
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.differentiation.DerivativeStructure;
 import org.apache.commons.math3.analysis.differentiation.FiniteDifferencesDifferentiator;
@@ -28,7 +30,6 @@ import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class Lrp extends Rectangle implements OCTOverlay {
@@ -39,18 +40,21 @@ public class Lrp extends Rectangle implements OCTOverlay {
     private static final Oct oct = Oct.getInstance();
     private final int lrpCenterXPosition;
     private List<XYPointerAnnotation> annotations = new LinkedList<>();
+    private double smoothingAlpha;
 
     public Lrp(String title, int x, int width, int height, LrpType type) {
         super(x - ((width - 1) / 2), (oct.getImageHeight() / 2) - (height / 2), width, height);
         lrpCenterXPosition = x;
         this.title = title;
         this.type = type;
+        LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
+        setSmoothingAlpha(lrpSettings.getLrpSmoothingFactor()); //init value of smoothing alpha
 
         //add listener to check for updates to lrp settings to change lrp
-        LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
         lrpSettings.addFirstPriorityPropertyChangeListener(e -> {
             switch (e.getPropertyName()) {
                 case LrpSettings.PROP_LRP_SMOOTHING_FACTOR:
+                    setSmoothingAlpha(lrpSettings.getLrpSmoothingFactor());
                     break;
                 case LrpSettings.PROP_LRP_HEIGHT:
                     this.height = lrpSettings.getLrpHeight();
@@ -64,6 +68,10 @@ public class Lrp extends Rectangle implements OCTOverlay {
                     break;
             }
         });
+    }
+
+    private void setSmoothingAlpha(int smoothingFactor) {
+        smoothingAlpha = 1D - (smoothingFactor * LrpSettings.LRP_SMOOTHING_FACTOR_MULTIPLIER);
     }
 
     /**
@@ -81,14 +89,30 @@ public class Lrp extends Rectangle implements OCTOverlay {
 
         return IntStream.range(0, height)
                 .map(scanY
-                        -> (int) Math.round(
-                                Arrays.stream(rgbArray, width * scanY, width * (scanY + 1))
+                                -> (int) Math.round(
+                        Arrays.stream(rgbArray, width * scanY, width * (scanY + 1))
                                 .map(ImageUtils::calculateGrayScaleValue)
                                 .average()
                                 .orElse(0)
                         )
                 )
                 .toArray();
+    }
+
+    /**
+     * Run the intensity values through a low-pass filter implemented from pseudo-code found on Wikipedia.
+     * https://en.wikipedia.org/wiki/Low-pass_filter#Simple_infinite_impulse_response_filter
+     *
+     * @param intesityValues
+     * @return
+     */
+    private int[] smoothIntensityValues(int[] intesityValues) {
+        int[] output = new int[intesityValues.length];
+        output[0] = intesityValues[0];
+        for (int i = 1; i < intesityValues.length; i++) {
+            output[i] = (int) Math.round(output[i - 1] + smoothingAlpha * (intesityValues[i] - output[i - 1]));
+        }
+        return output;
     }
 
     public LrpSeries getAllSeriesData() {
@@ -111,7 +135,7 @@ public class Lrp extends Rectangle implements OCTOverlay {
         XYSeries lrp = new XYSeries(getName() + " LRP");
         lrp.setKey(getName());
 
-        int[] intensityValues = getIntensityValues();
+        int[] intensityValues = smoothIntensityValues(getIntensityValues());
         for (int i = 0; i < intensityValues.length; i++) {
             lrp.add(i + y, intensityValues[i]);
         }
