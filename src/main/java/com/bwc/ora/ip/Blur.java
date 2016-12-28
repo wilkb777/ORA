@@ -5,8 +5,8 @@
  */
 package com.bwc.ora.ip;
 
-import ij.plugin.filter.GaussianBlur;
 import ij.process.ByteProcessor;
+
 import java.awt.image.BufferedImage;
 
 /**

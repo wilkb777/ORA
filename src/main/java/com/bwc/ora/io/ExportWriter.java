@@ -11,8 +11,10 @@ import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.data.xy.XYDataItem;
 import org.jfree.data.xy.XYSeries;
 
+import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.DecimalFormat;
 import java.util.LinkedList;
@@ -120,6 +122,19 @@ public class ExportWriter {
         });
     }
 
+    private static void writeOct(File outdir) {
+        Oct oct = Oct.getInstance();
+        OctSettings octSettings = ModelsCollection.getInstance().getOctSettings();
+        String octType = octSettings.isDisplayLogOct() ? "log" : "linear";
+        //save capture of OCT as displayed to user
+        File screenFile = new File(outdir, oct.getFileNameWithoutExtension() + "_" + octType + "_analysis_oct.png");
+        try {
+            ImageIO.write(oct.getTransformedOct(), "png", screenFile);
+        } catch (IOException e) {
+            throw new RuntimeException("failed to write modified oct");
+        }
+    }
+
     public static void exportAnalysis(File outputLocation) throws FileNotFoundException {
         File analysisOutdir = new File(outputLocation, "analysis_" + Oct.getInstance().getFileNameWithoutExtension());
         if (!analysisOutdir.exists()) {
@@ -133,5 +148,6 @@ public class ExportWriter {
         writePeak2PeakCsvs(analysisOutdir);
         writePeaksCsvs(analysisOutdir);
         writeSettingsCsv(analysisOutdir);
+        writeOct(analysisOutdir);
     }
 }
