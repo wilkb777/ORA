@@ -5,6 +5,8 @@
  */
 package com.bwc.ora.models;
 
+import com.google.gson.Gson;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 
@@ -24,13 +26,13 @@ public class DisplaySettings {
     private int scaleBarEdgeBufferWidth = 20;
     public static final String PROP_SCALE_BAR_EDGE_BUFFER_WIDTH = "scaleBarEdgeBufferWidth";
 
-
     public void resetToDefaultSettings() {
-        setDisplayFileName(true);
-        setShowFwhmOnLrp(false);
-        setShowLrpPeaks(true);
-        setDisplayScaleBarsOnOct(true);
-        setScaleBarEdgeBufferWidth(20);
+        DisplaySettings ds = new DisplaySettings();
+        setDisplayFileName(ds.displayFileName);
+        setShowFwhmOnLrp(ds.showFwhmOnLrp);
+        setShowLrpPeaks(ds.showLrpPeaks);
+        setDisplayScaleBarsOnOct(ds.displayScaleBarsOnOct);
+        setScaleBarEdgeBufferWidth(ds.scaleBarEdgeBufferWidth);
     }
 
     /**

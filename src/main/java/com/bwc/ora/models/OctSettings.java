@@ -50,14 +50,15 @@ public class OctSettings {
 
 
     public void resetToDefaultSettings() {
-        setApplyNoiseReduction(false);
-        setApplyContrastAdjustment(false);
-        setDisplayLogOct(true);
-        setSmoothingFactor(0D);
-        setSharpenWeight(0F);
-        setSharpenKernelRadius(0D);
-        setxScale(0D);
-        setyScale(0D);
+        OctSettings ds = new OctSettings();
+        setApplyNoiseReduction(ds.applyNoiseReduction);
+        setApplyContrastAdjustment(ds.applyContrastAdjustment);
+        setDisplayLogOct(ds.displayLogOct);
+        setSmoothingFactor(ds.smoothingFactor);
+        setSharpenWeight(ds.sharpenWeight);
+        setSharpenKernelRadius(ds.sharpenKernelRadius);
+        setxScale(ds.xScale);
+        setyScale(ds.yScale);
     }
 
     public static double getSmoothingFactorSliderMultiplier() {

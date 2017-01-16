@@ -38,12 +38,13 @@ public class LrpSettings {
     public static final String PROP_DISTANCE_UNITS_IN_PIXELS = "distanceUnitsInPixels";
 
     public void resetToDefaultSettings() {
-        setLrpHeight(300);
-        setLrpWidth(5);
-        setNumberOfLrp(1);
-        setLrpSmoothingFactor(0);
-        setLrpSeperationDistance(300D);
-        setDistanceUnitsInPixels(false);
+        LrpSettings ds = new LrpSettings();
+        setLrpHeight(ds.lrpHeight);
+        setLrpWidth(ds.lrpWidth);
+        setNumberOfLrp(ds.numberOfLrp);
+        setLrpSmoothingFactor(ds.lrpSmoothingFactor);
+        setLrpSeperationDistance(ds.lrpSeperationDistance);
+        setDistanceUnitsInPixels(ds.distanceUnitsInPixels);
     }
 
     /**
