@@ -67,6 +67,7 @@ public class Oct {
     public void setLogOctImage(BufferedImage logOctImage) {
         //segmentation as well as some image operations can only be done on 
         //8-bit gray scale images, ensure image is in useable format for application
+        System.out.println("type:" + logOctImage.getType());
         ImagePlus ip = new ImagePlus("", logOctImage);
         if (ip.getBitDepth() != 8) {
             ImageConverter ic = new ImageConverter(ip);
