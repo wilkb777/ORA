@@ -15,6 +15,10 @@ public class AnalysisSettings {
         setCurrentAnalysisMode(as.getCurrentAnalysisMode());
     }
 
+    public void loadSettings(AnalysisSettings analysisSettings) {
+        setCurrentAnalysisMode(analysisSettings.getCurrentAnalysisMode());
+    }
+
     public AnalysisMode getCurrentAnalysisMode() {
         return currentAnalysisMode;
     }
@@ -44,4 +48,5 @@ public class AnalysisSettings {
     public void removePropertyChangeListener(PropertyChangeListener listener) {
         propertyChangeSupport.removePropertyChangeListener(listener);
     }
+
 }

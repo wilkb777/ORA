@@ -56,4 +56,11 @@ public class ModelsCollection {
         displaySettings.resetToDefaultSettings();
         analysisSettings.resetToDefaultSettings();
     }
+
+    public void loadSettings(ModelsCollection loadedSettings){
+        lrpSettings.loadSettings(loadedSettings.getLrpSettings());
+        octSettings.loadSettings(loadedSettings.getOctSettings());
+        displaySettings.loadSettings(loadedSettings.getDisplaySettings());
+        analysisSettings.loadSettings(loadedSettings.getAnalysisSettings());
+    }
 }

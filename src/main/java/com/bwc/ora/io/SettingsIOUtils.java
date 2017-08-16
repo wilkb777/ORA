@@ -16,4 +16,9 @@ public class SettingsIOUtils {
             pw.print(jsonFormatter.toJson(ModelsCollection.getInstance()));
         }
     }
+
+    public static void loadSettings(File analysisSettingsFile) throws FileNotFoundException {
+        ModelsCollection loadedSettings = (new Gson()).fromJson(new FileReader(analysisSettingsFile), ModelsCollection.class);
+        ModelsCollection.getInstance().loadSettings(loadedSettings);
+    }
 }
