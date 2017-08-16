@@ -28,15 +28,15 @@ public class OctSettings {
     public static final String PROP_APPLY_CONTRAST_ADJUSTMENT = "applyContrastAdjustment";
     private boolean displayLogOct = true;
     public static final String PROP_DISPLAY_LOG_OCT = "displayLogOct";
-    private static final int[] smoothingFactorSliderRange = new int[]{0, 50};
+    private static final int[] smoothingFactorSliderRange = new int[] { 0, 50 };
     private static final double smoothingFactorSliderMultiplier = 0.1D;
     private double smoothingFactor = 0D;
     public static final String PROP_SMOOTHING_FACTOR = "smoothingFactor";
-    private static final int[] sharpenWeightSliderRange = new int[]{0, 100};
+    private static final int[] sharpenWeightSliderRange = new int[] { 0, 100 };
     private static final float sharpenWeightSliderMultiplier = 0.01F;
     private float sharpenWeight = 0F;
     public static final String PROP_SHARPEN_WEIGHT = "sharpenWeight";
-    private static final int[] sharpenKernelRadiusSliderRange = new int[]{0, 200};
+    private static final int[] sharpenKernelRadiusSliderRange = new int[] { 0, 200 };
     private static final double sharpenKernelRadiusSliderMultiplier = 0.1D;
     private double sharpenKernelRadius = 0D;
     public static final String PROP_SHARPEN_KERNEL_RADIUS = "sharpenKernelRadius";
@@ -46,8 +46,7 @@ public class OctSettings {
     public static final String PROP_Y_SCALE = "yScale";
     private double zoom = 1D;
     public static final String PROP_ZOOM = "zoom";
-    private static final int[] zoomSliderRange = new int[]{1, 50};
-
+    private static final int[] zoomSliderRange = new int[] { 1, 50 };
 
     public void resetToDefaultSettings() {
         OctSettings ds = new OctSettings();
@@ -59,6 +58,17 @@ public class OctSettings {
         setSharpenKernelRadius(ds.sharpenKernelRadius);
         setxScale(ds.xScale);
         setyScale(ds.yScale);
+    }
+
+    public void loadSettings(OctSettings newOctSettings) {
+        setApplyNoiseReduction(newOctSettings.applyNoiseReduction);
+        setApplyContrastAdjustment(newOctSettings.applyContrastAdjustment);
+        setDisplayLogOct(newOctSettings.displayLogOct);
+        setSmoothingFactor(newOctSettings.smoothingFactor);
+        setSharpenWeight(newOctSettings.sharpenWeight);
+        setSharpenKernelRadius(newOctSettings.sharpenKernelRadius);
+        setxScale(newOctSettings.xScale);
+        setyScale(newOctSettings.yScale);
     }
 
     public static double getSmoothingFactorSliderMultiplier() {

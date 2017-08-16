@@ -5,10 +5,7 @@
  */
 package com.bwc.ora.collections;
 
-import com.bwc.ora.models.DisplaySettings;
-import com.bwc.ora.models.LrpSettings;
-import com.bwc.ora.models.OctSettings;
-import com.bwc.ora.models.ScaleBar;
+import com.bwc.ora.models.*;
 
 /**
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
@@ -19,6 +16,7 @@ public class ModelsCollection {
     private final OctSettings octSettings = new OctSettings();
     private final DisplaySettings displaySettings = new DisplaySettings();
     private final ScaleBar scaleBar = new ScaleBar("scale_bars", 100);
+    private final AnalysisSettings analysisSettings = new AnalysisSettings();
 
     private ModelsCollection() {
     }
@@ -48,9 +46,14 @@ public class ModelsCollection {
         return scaleBar;
     }
 
+    public AnalysisSettings getAnalysisSettings() {
+        return analysisSettings;
+    }
+
     public void resetSettingsToDefault() {
         lrpSettings.resetToDefaultSettings();
         octSettings.resetToDefaultSettings();
         displaySettings.resetToDefaultSettings();
+        analysisSettings.resetToDefaultSettings();
     }
 }

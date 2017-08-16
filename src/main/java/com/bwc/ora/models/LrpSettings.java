@@ -21,8 +21,8 @@ public class LrpSettings {
 
     private transient final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
-    private final Integer[] lrpWidthOptions = new Integer[]{1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25};
-    private final int[] lrpSmoothingRange = new int[]{0, 49};
+    private final Integer[] lrpWidthOptions = new Integer[] { 1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25 };
+    private final int[] lrpSmoothingRange = new int[] { 0, 49 };
     private int lrpWidth = 5;
     public static final String PROP_LRP_WIDTH = "lrpWidth";
     private int lrpHeight = 300;
@@ -45,6 +45,15 @@ public class LrpSettings {
         setLrpSmoothingFactor(ds.lrpSmoothingFactor);
         setLrpSeperationDistance(ds.lrpSeperationDistance);
         setDistanceUnitsInPixels(ds.distanceUnitsInPixels);
+    }
+
+    public void loadSettings(LrpSettings newLrpSettings) {
+        setLrpHeight(newLrpSettings.lrpHeight);
+        setLrpWidth(newLrpSettings.lrpWidth);
+        setNumberOfLrp(newLrpSettings.numberOfLrp);
+        setLrpSmoothingFactor(newLrpSettings.lrpSmoothingFactor);
+        setLrpSeperationDistance(newLrpSettings.lrpSeperationDistance);
+        setDistanceUnitsInPixels(newLrpSettings.distanceUnitsInPixels);
     }
 
     /**

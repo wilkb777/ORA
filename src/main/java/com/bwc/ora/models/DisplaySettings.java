@@ -35,6 +35,14 @@ public class DisplaySettings {
         setScaleBarEdgeBufferWidth(ds.scaleBarEdgeBufferWidth);
     }
 
+    public void loadSettings(DisplaySettings newDisplaySettings) {
+        setDisplayFileName(newDisplaySettings.displayFileName);
+        setShowFwhmOnLrp(newDisplaySettings.showFwhmOnLrp);
+        setShowLrpPeaks(newDisplaySettings.showLrpPeaks);
+        setDisplayScaleBarsOnOct(newDisplaySettings.displayScaleBarsOnOct);
+        setScaleBarEdgeBufferWidth(newDisplaySettings.scaleBarEdgeBufferWidth);
+    }
+
     /**
      * Get the value of displayScaleBarsOnOct
      *
