@@ -1,6 +1,7 @@
 package com.bwc.ora.views.menus;
 
 import com.bwc.ora.collections.ModelsCollection;
+import com.bwc.ora.io.SettingsIOUtils;
 import com.bwc.ora.models.DisplaySettings;
 
 import javax.swing.*;
@@ -14,6 +15,8 @@ public class SettingsMenu extends JMenu {
     private JCheckBoxMenuItem displayFileNameCheckBox = new JCheckBoxMenuItem("Display OCT File Name", true);
     private JCheckBoxMenuItem displayLrpPeaksCheckBox = new JCheckBoxMenuItem("Display LRP Peaks", true);
     private JCheckBoxMenuItem showFwhmCheckBox = new JCheckBoxMenuItem("Display FWHM on LRP", false);
+    private JMenuItem loadAnalysisSettingsMenuItem = new JMenuItem("Load Analysis Settings");
+    private JMenuItem saveAnalysisSettingsMenuItem = new JMenuItem("Save Analysis Settings");
 
     public SettingsMenu() {
         setText("Settings");
@@ -30,8 +33,17 @@ public class SettingsMenu extends JMenu {
         add(displayScaleBarsCheckBox);
         add(displayLrpPeaksCheckBox);
         add(showFwhmCheckBox);
+        addSeparator();
+        add(saveAnalysisSettingsMenuItem);
+        add(loadAnalysisSettingsMenuItem);
 
         connectSettingsToModel();
+        registerItemListeners();
+    }
+
+    private void registerItemListeners() {
+        saveAnalysisSettingsMenuItem.addActionListener(SettingsIOUtils.saveAnalysisSettingsActionListener);
+        loadAnalysisSettingsMenuItem.addActionListener(SettingsIOUtils.loadAnalysisSettingsActionListener);
     }
 
     private void connectSettingsToModel() {

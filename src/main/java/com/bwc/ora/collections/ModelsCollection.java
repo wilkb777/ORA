@@ -15,7 +15,7 @@ public class ModelsCollection {
     private final LrpSettings lrpSettings = new LrpSettings();
     private final OctSettings octSettings = new OctSettings();
     private final DisplaySettings displaySettings = new DisplaySettings();
-    private final ScaleBar scaleBar = new ScaleBar("scale_bars", 100);
+    private transient final ScaleBar scaleBar = new ScaleBar("scale_bars", 100);
     private final AnalysisSettings analysisSettings = new AnalysisSettings();
 
     private ModelsCollection() {

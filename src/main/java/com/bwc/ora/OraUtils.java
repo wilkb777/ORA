@@ -43,7 +43,8 @@ public class OraUtils {
     public static final ActionListener testAnalysisActionListener = evt -> {
         try {
             //read in image and ready for analysis
-            OraUtils.loadOctFromTiffFile(new File(OraUtils.class.getClassLoader().getResource("KS_10238_OS_L_7_90_05_529disp_reg_fr1-25_AL21p35.tif").toURI()), Oct.getInstance());
+            OraUtils.loadOctFromTiffFile(new File(OraUtils.class.getClassLoader().getResource("KS_10238_OS_L_7_90_05_529disp_reg_fr1-25_AL21p35.tif").toURI()),
+                    Oct.getInstance());
             Collections.getInstance().resetCollectionsForNewAnalysis();
             ModelsCollection.getInstance().resetSettingsToDefault();
         } catch (IOException | URISyntaxException ex) {
@@ -56,7 +57,7 @@ public class OraUtils {
     public static final ActionListener newAnalysisActionListener = evt -> {
         try {
             //read in image and ready for analysis
-            File tiffFile = OraUtils.selectFile(null, JFileChooser.FILES_ONLY, "Log OCT", "TIFF file", "tiff", "tif");
+            File tiffFile = OraUtils.selectFile(true, null, JFileChooser.FILES_ONLY, "Log OCT", "TIFF file", "tiff", "tif");
             if (tiffFile != null) {
                 OraUtils.loadOctFromTiffFile(tiffFile, Oct.getInstance());
                 Collections.getInstance().resetCollectionsForNewAnalysis();
@@ -71,7 +72,7 @@ public class OraUtils {
     public static final ActionListener exportAnalysisActionListener = evt -> {
         try {
             //read in image and ready for analysis
-            File exportDir = OraUtils.selectFile(null, JFileChooser.DIRECTORIES_ONLY, "Analysis export directory", null);
+            File exportDir = OraUtils.selectFile(true, null, JFileChooser.DIRECTORIES_ONLY, "Analysis export directory", null);
             if (exportDir != null) {
                 ExportWriter.exportAnalysis(exportDir);
             }
@@ -87,7 +88,8 @@ public class OraUtils {
         oct.setLogOctImage(TiffReader.readTiffImage(octFile));
     }
 
-    public static File selectFile(Component parent, int selectorType, String selectDescription, String extensionDescription, String... extentions) {
+    public static File selectFile(boolean openDialog, Component parent, int selectorType, String selectDescription, String extensionDescription,
+            String... extentions) {
         File prevLocation = fc.getSelectedFile() != null ? fc.getSelectedFile().getParentFile() : null;
 
         fc = new JFileChooser(prevLocation);
@@ -99,13 +101,11 @@ public class OraUtils {
         fc.setAcceptAllFileFilterUsed(false);
         fc.setApproveButtonText("Select");
         fc.setDialogTitle("Select " + selectDescription + "...");
-        if (fc.getSelectedFile() != null && fc.getSelectedFile().isFile()) {
-            fc.setCurrentDirectory(fc.getSelectedFile().getParentFile());
-        }
-        int returnVal = fc.showOpenDialog(parent);
+        int returnVal = openDialog ? fc.showOpenDialog(parent) : fc.showSaveDialog(parent);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             if (selectorType == JFileChooser.FILES_ONLY) {
-                return loadFile(fc.getSelectedFile());
+                System.out.println("pwd: "+fc.getCurrentDirectory());
+                return openDialog ? loadFile(fc.getSelectedFile()) : fc.getSelectedFile();
             } else if (selectorType == JFileChooser.DIRECTORIES_ONLY) {
                 return loadDir(fc.getSelectedFile());
             } else {
@@ -117,12 +117,11 @@ public class OraUtils {
     }
 
     private static File loadFile(File file) {
-        if (file.exists()) {
-            if (!file.isFile()) {
-                throw new IllegalArgumentException("Supplied input file " + file.getAbsolutePath() + " is not a file!");
-            }
-        } else {
+        if (!file.exists()) {
             throw new IllegalArgumentException("Supplied input file does not exist @ " + file.getAbsolutePath() + ".");
+        }
+        if (!file.isFile()) {
+            throw new IllegalArgumentException("Supplied input file " + file.getAbsolutePath() + " is not a file!");
         }
         return file;
     }
@@ -168,7 +167,9 @@ public class OraUtils {
                         ));
                         lrpCollection.setSelectedIndex(0);
                         lrpPanel.removeMouseListener(this);
-                        if (buttonToEnable != null) buttonToEnable.setEnabled(true);
+                        if (buttonToEnable != null) {
+                            buttonToEnable.setEnabled(true);
+                        }
                     }
                 }
             });
@@ -208,8 +209,8 @@ public class OraUtils {
         }
 
         boolean illegalPositionLrps = lrps.stream()
-                .anyMatch(lrp -> lrp.getLrpCenterXPosition() - ((lrpSettings.getLrpWidth() - 1) / 2) < 0
-                        || lrp.getLrpCenterXPosition() + ((lrpSettings.getLrpWidth() - 1) / 2) >= octWidth);
+                                          .anyMatch(lrp -> lrp.getLrpCenterXPosition() - ((lrpSettings.getLrpWidth() - 1) / 2) < 0
+                                                  || lrp.getLrpCenterXPosition() + ((lrpSettings.getLrpWidth() - 1) / 2) >= octWidth);
 
         if (illegalPositionLrps) {
             throw new IllegalArgumentException("Combination of LRP width, the number of LRPs and LRP " +
