@@ -6,6 +6,11 @@
 package com.bwc.ora.views.toolbars;
 
 import com.bwc.ora.OraUtils;
+import com.bwc.ora.analysis.AnalysisConditionsNotMetException;
+import com.bwc.ora.analysis.EZAnalysis;
+import com.bwc.ora.analysis.FreeFormAnalysis;
+import com.bwc.ora.analysis.PreformattedAnalysis;
+import com.bwc.ora.models.AnalysisSettings;
 import com.bwc.ora.models.LrpSettings;
 import com.bwc.ora.collections.ModelsCollection;
 
@@ -46,6 +51,8 @@ public class LrpSettingsPanel extends JPanel {
     private final JButton runAnalysisButton;
     private final JSlider lrpSmoothingSlider;
     private final String title;
+    private final String anchorLrpButtonFreeFormText;
+    private final String anchorLrpButtonPreforrmattedText;
 
     public LrpSettingsPanel() {
         super();
@@ -62,7 +69,9 @@ public class LrpSettingsPanel extends JPanel {
         this.lrpWidthField = new JComboBox<>(settings.getLrpWidthOptions());
         this.lrpWidthField.setSelectedItem(settings.getLrpWidth());
         this.runAnalysisButton = new JButton("Run Analysis");
-        this.anchorLrpButton = new JButton("<html><center>Generate</center><center>Anchor LRP</center></html>");
+        this.anchorLrpButtonFreeFormText = "<html><center>Generate</center><center>Freeform LRP</center></html>";
+        this.anchorLrpButtonPreforrmattedText = "<html><center>Generate</center><center>Anchor LRP</center></html>";
+        this.anchorLrpButton = new JButton(anchorLrpButtonPreforrmattedText);
         init();
         connectToModel();
         title = "LRP Settings";
@@ -120,7 +129,7 @@ public class LrpSettingsPanel extends JPanel {
         radioBtnPanel.add(lrpSeparationDistanceField);
         radioBtnPanel.add(Box.createHorizontalStrut(7));
         radioBtnPanel.add(lrpSeparationDistanceInMicrons);
-//        radioBtnPanel.add(Box.createHorizontalStrut(3));
+        //        radioBtnPanel.add(Box.createHorizontalStrut(3));
         radioBtnPanel.add(lrpSeparationDistanceInPixels);
         lrpSeparationDistanceUnitsButtonGroup.add(lrpSeparationDistanceInMicrons);
         lrpSeparationDistanceUnitsButtonGroup.add(lrpSeparationDistanceInPixels);
@@ -221,26 +230,61 @@ public class LrpSettingsPanel extends JPanel {
             }
         });
 
-        anchorLrpButton.addActionListener(evt -> {
-            int option = JOptionPane.showOptionDialog(null, "Anchor method to use?",
-                    "Anchoring", JOptionPane.YES_NO_OPTION,
-                    JOptionPane.QUESTION_MESSAGE, null,
-                    new Object[]{"Assisted Fovea Finding", "Manual"}, "Manual");
-            switch (option) {
-                case JOptionPane.YES_OPTION:
+        AnalysisSettings analysisSettings = ModelsCollection.getInstance().getAnalysisSettings();
+        analysisSettings.addPropertyChangeListener(evt -> {
+            if(AnalysisSettings.PROP_CURRENT_ANALYSIS_MODE.equals(evt.getPropertyName())){
+                switch (analysisSettings.getCurrentAnalysisMode()) {
+                case PREFORMATTED:
+                    anchorLrpButton.setText(anchorLrpButtonPreforrmattedText);
                     break;
-                case JOptionPane.NO_OPTION:
-                    OraUtils.generateAnchorLrp(false, runAnalysisButton);
+                case FREE_FORM:
+                    anchorLrpButton.setText(anchorLrpButtonFreeFormText);
                     break;
-                default:
+                case EZ_DETECTION:
+                    anchorLrpButton.setText(anchorLrpButtonPreforrmattedText);
                     break;
+                }
             }
+        });
+
+        anchorLrpButton.addActionListener(evt -> {
+            switch (analysisSettings.getCurrentAnalysisMode()) {
+            case PREFORMATTED:
+            case FREE_FORM:
+                OraUtils.generateAnchorLrp(false, runAnalysisButton);
+                break;
+            case EZ_DETECTION:
+                break;
+            }
+            //            int option = JOptionPane.showOptionDialog(null, "Anchor method to use?",
+            //                    "Anchoring", JOptionPane.YES_NO_OPTION,
+            //                    JOptionPane.QUESTION_MESSAGE, null,
+            //                    new Object[]{"Assisted Fovea Finding", "Manual"}, "Manual");
+            //            switch (option) {
+            //                case JOptionPane.YES_OPTION:
+            //                    break;
+            //                case JOptionPane.NO_OPTION:
+            //                    OraUtils.generateAnchorLrp(false, runAnalysisButton);
+            //                    break;
+            //                default:
+            //                    break;
+            //            }
         });
 
         runAnalysisButton.addActionListener(evt -> {
             try {
-                OraUtils.runAnalysis();
-            } catch (IllegalArgumentException e) {
+                switch (analysisSettings.getCurrentAnalysisMode()) {
+                case PREFORMATTED:
+                    new PreformattedAnalysis().run();
+                    break;
+                case FREE_FORM:
+                    new FreeFormAnalysis().run();
+                    break;
+                case EZ_DETECTION:
+                    new EZAnalysis().run();
+                    break;
+                }
+            } catch (AnalysisConditionsNotMetException e) {
                 JOptionPane.showMessageDialog(null, "An error was encountered:\n" + e.getMessage()
                         + "\nRevise settings and try to run the analysis again.", "Settings Error", JOptionPane.ERROR_MESSAGE);
             }

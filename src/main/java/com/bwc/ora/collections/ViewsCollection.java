@@ -27,7 +27,9 @@ public class ViewsCollection extends ArrayList<JPanel> {
     public void setOctSettingsAsSelectedTab() {
         int i = 0;
         for (; i < size(); i++) {
-            if (get(i) instanceof OctSettingsPanel) break;
+            if (get(i) instanceof OctSettingsPanel) {
+                break;
+            }
         }
         settingsTabPane.setSelectedIndex(i);
     }
@@ -35,7 +37,9 @@ public class ViewsCollection extends ArrayList<JPanel> {
     public void setAnalysisTabAsSelectedTab() {
         int i = 0;
         for (; i < size(); i++) {
-            if (get(i) instanceof AnalysisPanel) break;
+            if (get(i) instanceof AnalysisPanel) {
+                break;
+            }
         }
         settingsTabPane.setSelectedIndex(i);
     }
