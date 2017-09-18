@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.bwc.ora.uitil;
+package com.bwc.ora.util;
 
 import javax.swing.JComponent;
 import javax.swing.event.ChangeEvent;

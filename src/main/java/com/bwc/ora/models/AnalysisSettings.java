@@ -8,6 +8,7 @@ import java.beans.PropertyChangeSupport;
  */
 public class AnalysisSettings {
     private AnalysisMode currentAnalysisMode = AnalysisMode.PREFORMATTED;
+    private AnalysisMode oldAnalysisMode = currentAnalysisMode;
     public static final String PROP_CURRENT_ANALYSIS_MODE = "currentAnalysisMode";
 
     public void resetToDefaultSettings() {
@@ -24,9 +25,13 @@ public class AnalysisSettings {
     }
 
     public void setCurrentAnalysisMode(AnalysisMode newAnlysisMode) {
-        AnalysisMode oldAnalysisMode = currentAnalysisMode;
+        oldAnalysisMode = currentAnalysisMode;
         currentAnalysisMode = newAnlysisMode;
         propertyChangeSupport.firePropertyChange(PROP_CURRENT_ANALYSIS_MODE, oldAnalysisMode, currentAnalysisMode);
+    }
+
+    public void revertAnalysisModeToPreviousMode() {
+        currentAnalysisMode = oldAnalysisMode;
     }
 
     private transient final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
