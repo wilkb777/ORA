@@ -18,7 +18,7 @@ import com.bwc.ora.util.ChangeSupport;
 import ij.ImagePlus;
 import ij.process.ImageConverter;
 
-import java.awt.Point;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.Comparator;
 import javax.swing.ImageIcon;
@@ -45,6 +45,7 @@ public class OCTDisplayPanel extends JLabel {
 
     private OCTDisplayPanel() {
         setAlignmentX(CENTER_ALIGNMENT);
+        setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
 
         //register listener for changes to Oct for auto update on change
         oct.addPropertyChangeListener(evt -> updateDisplay(false, new ChangeEvent(evt)));

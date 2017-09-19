@@ -5,15 +5,10 @@
  */
 package com.bwc.ora.collections;
 
-import com.bwc.ora.models.ScaleBar;
 import com.bwc.ora.views.OCTOverlay;
-import com.bwc.ora.views.OctDrawnPoint;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
+import javax.swing.*;
 import java.util.stream.Stream;
-import javax.swing.JList;
-import javax.swing.ListSelectionModel;
 
 /**
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}

@@ -232,15 +232,18 @@ public class LrpSettingsPanel extends JPanel {
 
         AnalysisSettings analysisSettings = ModelsCollection.getInstance().getAnalysisSettings();
         analysisSettings.addPropertyChangeListener(evt -> {
-            if(AnalysisSettings.PROP_CURRENT_ANALYSIS_MODE.equals(evt.getPropertyName())){
+            if (AnalysisSettings.PROP_CURRENT_ANALYSIS_MODE.equals(evt.getPropertyName())) {
                 switch (analysisSettings.getCurrentAnalysisMode()) {
                 case PREFORMATTED:
+                    enableNumberLRPInput();
                     anchorLrpButton.setText(anchorLrpButtonPreforrmattedText);
                     break;
                 case FREE_FORM:
+                    disableNumberLRPInput();
                     anchorLrpButton.setText(anchorLrpButtonFreeFormText);
                     break;
                 case EZ_DETECTION:
+                    enableNumberLRPInput();
                     anchorLrpButton.setText(anchorLrpButtonPreforrmattedText);
                     break;
                 }
@@ -252,6 +255,7 @@ public class LrpSettingsPanel extends JPanel {
             case PREFORMATTED:
             case FREE_FORM:
                 OraUtils.generateAnchorLrp(false, runAnalysisButton);
+                break;
             case EZ_DETECTION:
                 OraUtils.generateAnchorLrp(false, runAnalysisButton);
                 break;
@@ -282,5 +286,13 @@ public class LrpSettingsPanel extends JPanel {
 
     public void disableRunAnalysisButton() {
         runAnalysisButton.setEnabled(false);
+    }
+
+    public void disableNumberLRPInput() {
+        numLrpField.setEnabled(false);
+    }
+
+    public void enableNumberLRPInput() {
+        numLrpField.setEnabled(true);
     }
 }

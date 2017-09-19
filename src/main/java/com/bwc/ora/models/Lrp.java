@@ -37,14 +37,15 @@ public class Lrp extends Rectangle implements OCTOverlay {
     private final String title;
     private final LrpType type;
     private boolean display = false;
-    private static final Oct oct = Oct.getInstance();
     private final int lrpCenterXPosition;
+    private final int lrpCenterYPosition;
     private List<XYPointerAnnotation> annotations = new LinkedList<>();
     private double smoothingAlpha;
 
-    public Lrp(String title, int x, int width, int height, LrpType type) {
-        super(x - ((width - 1) / 2), (oct.getImageHeight() / 2) - (height / 2), width, height);
+    public Lrp(String title, int x, int y, int width, int height, LrpType type) {
+        super(x - ((width - 1) / 2), y - (height / 2), width, height);
         lrpCenterXPosition = x;
+        lrpCenterYPosition = y;
         this.title = title;
         this.type = type;
         LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
@@ -58,7 +59,7 @@ public class Lrp extends Rectangle implements OCTOverlay {
                     break;
                 case LrpSettings.PROP_LRP_HEIGHT:
                     this.height = lrpSettings.getLrpHeight();
-                    this.y = (oct.getImageHeight() / 2) - (this.height / 2);
+                    this.y = lrpCenterYPosition - (this.height / 2);
                     break;
                 case LrpSettings.PROP_LRP_WIDTH:
                     this.width = lrpSettings.getLrpWidth();
@@ -85,7 +86,7 @@ public class Lrp extends Rectangle implements OCTOverlay {
      */
     private int[] getIntensityValues() {
 
-        int[] rgbArray = oct.getTransformedOct().getRGB(x, y, width, height, null, 0, width);
+        int[] rgbArray = Oct.getInstance().getTransformedOct().getRGB(x, y, width, height, null, 0, width);
 
         return IntStream.range(0, height)
                 .map(scanY
@@ -392,4 +393,7 @@ public class Lrp extends Rectangle implements OCTOverlay {
         this.annotations = annotations;
     }
 
+    public int getLrpCenterYPosition() {
+        return lrpCenterYPosition;
+    }
 }

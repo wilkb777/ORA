@@ -162,6 +162,7 @@ public class OraUtils {
                         lrpCollection.setLrps(Arrays.asList(
                                 new Lrp("Fovea",
                                         clickPoint.x,
+                                        clickPoint.y,
                                         lrpSettings.getLrpWidth(),
                                         lrpSettings.getLrpHeight(),
                                         LrpType.FOVEAL)
@@ -195,6 +196,7 @@ public class OraUtils {
             lrpPosToLeftOfFovea -= distanceBetweenLrps;
             lrps.push(new Lrp("Left " + ((lrps.size() + 1) / 2),
                     lrpPosToLeftOfFovea,
+                    fovealLrp.getLrpCenterYPosition(),
                     lrpSettings.getLrpWidth(),
                     lrpSettings.getLrpHeight(),
                     LrpType.PERIPHERAL));
@@ -203,6 +205,7 @@ public class OraUtils {
             if (lrps.size() < numberOfLrpTotal) {
                 lrps.add(new Lrp("Right " + (lrps.size() / 2),
                         lrpPosToRightOfFovea,
+                        fovealLrp.getLrpCenterYPosition(),
                         lrpSettings.getLrpWidth(),
                         lrpSettings.getLrpHeight(),
                         LrpType.PERIPHERAL));
@@ -234,24 +237,6 @@ public class OraUtils {
                 setEnabled(child, enabled);
             }
         }
-    }
-
-    public static void runAnalysis() {
-        OctSettings octSettings = ModelsCollection.getInstance().getOctSettings();
-        if (!(octSettings.getyScale() > 0 && octSettings.getxScale() > 0)) {
-            throw new IllegalArgumentException("X and Y scale must be positive, non-zero decimal numbers.");
-        }
-
-        /*
-         Based on the current settings generate the appropriate number of LRPs for the user to analyze
-         */
-        setLrpsForAnalysis();
-
-        //disable settings panels so no changes to the settings can be made
-        Collections.getInstance().getViewsCollection().disableViewsInputs();
-
-        //move to analysis tab
-        Collections.getInstance().getViewsCollection().setAnalysisTabAsSelectedTab();
     }
 
 }
