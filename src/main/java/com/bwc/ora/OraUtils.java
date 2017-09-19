@@ -104,7 +104,7 @@ public class OraUtils {
         int returnVal = openDialog ? fc.showOpenDialog(parent) : fc.showSaveDialog(parent);
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             if (selectorType == JFileChooser.FILES_ONLY) {
-                System.out.println("pwd: "+fc.getCurrentDirectory());
+                System.out.println("pwd: " + fc.getCurrentDirectory());
                 return openDialog ? loadFile(fc.getSelectedFile()) : fc.getSelectedFile();
             } else if (selectorType == JFileChooser.DIRECTORIES_ONLY) {
                 return loadDir(fc.getSelectedFile());
@@ -148,6 +148,7 @@ public class OraUtils {
     public static void generateAnchorLrp(boolean assisted, JButton buttonToEnable) {
         OCTDisplayPanel lrpPanel = OCTDisplayPanel.getInstance();
         LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
+        JOptionPane.showMessageDialog(null, "Click on the OCT where\nthe anchor LRP should go.", "Click anchor point", JOptionPane.INFORMATION_MESSAGE);
         if (assisted) {
             //todo add in assistive fovea finding
         } else {

@@ -1,5 +1,6 @@
 package com.bwc.ora.views.menus;
 
+import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.models.*;
 import com.bwc.ora.views.dialog.ORADialogs;
@@ -36,9 +37,24 @@ public class AnalysisPresetsMenu extends JMenu {
     }
 
     private void connectSettingsToModel() {
-        freeformCheckBox.addActionListener(evt -> analysisSettings.setCurrentAnalysisMode(AnalysisMode.FREE_FORM));
-        ezCheckBox.addActionListener(evt -> analysisSettings.setCurrentAnalysisMode(AnalysisMode.EZ_DETECTION));
-        preformattedCheckBox.addActionListener(evt -> analysisSettings.setCurrentAnalysisMode(AnalysisMode.PREFORMATTED));
+        freeformCheckBox.addActionListener(evt -> analysisSettings.setCurrentAnalysisMode(AnalysisMode.FREE_FORM, true));
+        ezCheckBox.addActionListener(evt -> analysisSettings.setCurrentAnalysisMode(AnalysisMode.EZ_DETECTION, true));
+        preformattedCheckBox.addActionListener(evt -> analysisSettings.setCurrentAnalysisMode(AnalysisMode.PREFORMATTED, true));
+        analysisSettings.addPropertyChangeListener(evt -> {
+            if(AnalysisSettings.PROP_RESET_TO_DEFAULT.equals(evt.getPropertyName())){
+                switch (ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode()) {
+                case PREFORMATTED:
+                    preformattedCheckBox.setSelected(true);
+                    break;
+                case FREE_FORM:
+                    freeformCheckBox.setSelected(true);
+                    break;
+                case EZ_DETECTION:
+                    ezCheckBox.setSelected(true);
+                    break;
+                }
+            }
+        });
         analysisSettings.addPropertyChangeListener(evt -> {
             if (AnalysisSettings.PROP_CURRENT_ANALYSIS_MODE.equals(evt.getPropertyName())) {
                 if (evt.getNewValue().equals(evt.getOldValue())) {
@@ -46,19 +62,10 @@ public class AnalysisPresetsMenu extends JMenu {
                 }
 
                 if (JOptionPane.YES_OPTION == ORADialogs.bringUpAnalysisModeChangeWarning(null)) {
-                    switch ((AnalysisMode) evt.getNewValue()) {
-                    case PREFORMATTED:
-                        System.out.println(AnalysisMode.PREFORMATTED);
-                        break;
-                    case FREE_FORM:
-                        System.out.println(AnalysisMode.FREE_FORM);
-                        break;
-                    case EZ_DETECTION:
-                        System.out.println(AnalysisMode.EZ_DETECTION);
-                        break;
-                    }
+                    Collections.getInstance().resetCollectionsForNewAnalysis();
+                    System.out.println(evt.getNewValue());
                 } else {
-                    analysisSettings.revertAnalysisModeToPreviousMode();
+                    analysisSettings.setCurrentAnalysisMode((AnalysisMode) evt.getOldValue(), false);
                     switch ((AnalysisMode) evt.getOldValue()) {
                     case PREFORMATTED:
                         preformattedCheckBox.setSelected(true);

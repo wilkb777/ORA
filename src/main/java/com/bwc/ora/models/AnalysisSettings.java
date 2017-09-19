@@ -10,28 +10,28 @@ public class AnalysisSettings {
     private AnalysisMode currentAnalysisMode = AnalysisMode.PREFORMATTED;
     private AnalysisMode oldAnalysisMode = currentAnalysisMode;
     public static final String PROP_CURRENT_ANALYSIS_MODE = "currentAnalysisMode";
+    public static final String PROP_RESET_TO_DEFAULT = "resetAnalysisMode";
 
     public void resetToDefaultSettings() {
         AnalysisSettings as = new AnalysisSettings();
-        setCurrentAnalysisMode(as.getCurrentAnalysisMode());
+        setCurrentAnalysisMode(as.getCurrentAnalysisMode(), false);
+        propertyChangeSupport.firePropertyChange(PROP_RESET_TO_DEFAULT, null, null);
     }
 
     public void loadSettings(AnalysisSettings analysisSettings) {
-        setCurrentAnalysisMode(analysisSettings.getCurrentAnalysisMode());
+        setCurrentAnalysisMode(analysisSettings.getCurrentAnalysisMode(), false);
     }
 
     public AnalysisMode getCurrentAnalysisMode() {
         return currentAnalysisMode;
     }
 
-    public void setCurrentAnalysisMode(AnalysisMode newAnlysisMode) {
+    public void setCurrentAnalysisMode(AnalysisMode newAnlysisMode, boolean firePropChange) {
         oldAnalysisMode = currentAnalysisMode;
         currentAnalysisMode = newAnlysisMode;
-        propertyChangeSupport.firePropertyChange(PROP_CURRENT_ANALYSIS_MODE, oldAnalysisMode, currentAnalysisMode);
-    }
-
-    public void revertAnalysisModeToPreviousMode() {
-        currentAnalysisMode = oldAnalysisMode;
+        if (firePropChange) {
+            propertyChangeSupport.firePropertyChange(PROP_CURRENT_ANALYSIS_MODE, oldAnalysisMode, currentAnalysisMode);
+        }
     }
 
     private transient final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
