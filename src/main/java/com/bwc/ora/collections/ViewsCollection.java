@@ -66,6 +66,7 @@ public class ViewsCollection extends ArrayList<JPanel> {
                 ((LrpSettingsPanel) container).disableRunAnalysisButton();
                 if(ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode() == AnalysisMode.FREE_FORM){
                     ((LrpSettingsPanel) container).disableNumberLRPInput();
+                    ((LrpSettingsPanel) container).enableRunAnalysisButton();
                 }
             }
         });

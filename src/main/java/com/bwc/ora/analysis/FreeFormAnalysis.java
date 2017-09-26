@@ -1,15 +1,16 @@
 package com.bwc.ora.analysis;
 
+import com.bwc.ora.OraUtils;
+import com.bwc.ora.collections.Collections;
+import com.bwc.ora.collections.LrpCollection;
+import com.bwc.ora.views.OCTDisplayPanel;
+
 import javax.swing.*;
 
 public class FreeFormAnalysis implements Analysis {
     @Override
     public void run() {
-        //enable LRP to be moved by the arrow keys
-        JOptionPane.showMessageDialog(null, "Use the arrow keys to move the LRP.", "Move LRP", JOptionPane.INFORMATION_MESSAGE);
-
-
-        //run analysis as normal
-        new PreformattedAnalysis().run();
+        //create LRP
+        OraUtils.generateAnchorLrp(false, null);
     }
 }

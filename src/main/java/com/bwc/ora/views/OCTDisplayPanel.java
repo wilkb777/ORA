@@ -9,23 +9,25 @@ import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.LrpCollection;
 import com.bwc.ora.collections.OctDrawnPointCollection;
 import com.bwc.ora.ip.ImageUtils;
-import com.bwc.ora.models.DisplaySettings;
-import com.bwc.ora.models.LrpSettings;
+import com.bwc.ora.models.*;
 import com.bwc.ora.collections.ModelsCollection;
-import com.bwc.ora.models.Oct;
-import com.bwc.ora.models.OctSettings;
+import com.bwc.ora.models.exception.LRPBoundryViolationException;
 import com.bwc.ora.util.ChangeSupport;
 import ij.ImagePlus;
 import ij.process.ImageConverter;
 
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
+import java.util.Arrays;
 import java.util.Comparator;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
+import javax.swing.*;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.MouseInputAdapter;
 
 /**
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
@@ -46,6 +48,7 @@ public class OCTDisplayPanel extends JLabel {
     private OCTDisplayPanel() {
         setAlignmentX(CENTER_ALIGNMENT);
         setCursor(new Cursor(Cursor.CROSSHAIR_CURSOR));
+        setFocusable(true);
 
         //register listener for changes to Oct for auto update on change
         oct.addPropertyChangeListener(evt -> updateDisplay(false, new ChangeEvent(evt)));
@@ -53,30 +56,30 @@ public class OCTDisplayPanel extends JLabel {
         //register listeners for changes to display settings for auto update on change
         dispSettings.addPropertyChangeListener(evt -> {
             switch (evt.getPropertyName()) {
-                case DisplaySettings.PROP_DISPLAY_SCALE_BARS_ON_OCT:
-                case DisplaySettings.PROP_SCALE_BAR_EDGE_BUFFER_WIDTH:
-                    updateDisplay(true, new ChangeEvent(evt));
-                default:
-                    break;
+            case DisplaySettings.PROP_DISPLAY_SCALE_BARS_ON_OCT:
+            case DisplaySettings.PROP_SCALE_BAR_EDGE_BUFFER_WIDTH:
+                updateDisplay(true, new ChangeEvent(evt));
+            default:
+                break;
             }
         });
 
         //register listeners for changes to oct settings for auto update on change
         octSettings.addPropertyChangeListener(evt -> {
             switch (evt.getPropertyName()) {
-                case OctSettings.PROP_APPLY_CONTRAST_ADJUSTMENT:
-                case OctSettings.PROP_APPLY_NOISE_REDUCTION:
-                case OctSettings.PROP_DISPLAY_LOG_OCT:
-                case OctSettings.PROP_SHARPEN_KERNEL_RADIUS:
-                case OctSettings.PROP_SHARPEN_WEIGHT:
-                case OctSettings.PROP_SMOOTHING_FACTOR:
-                    updateDisplay(false, new ChangeEvent(evt));
-                    break;
-                case OctSettings.PROP_X_SCALE:
-                case OctSettings.PROP_Y_SCALE:
-                    updateDisplay(true, new ChangeEvent(evt));
-                default:
-                    break;
+            case OctSettings.PROP_APPLY_CONTRAST_ADJUSTMENT:
+            case OctSettings.PROP_APPLY_NOISE_REDUCTION:
+            case OctSettings.PROP_DISPLAY_LOG_OCT:
+            case OctSettings.PROP_SHARPEN_KERNEL_RADIUS:
+            case OctSettings.PROP_SHARPEN_WEIGHT:
+            case OctSettings.PROP_SMOOTHING_FACTOR:
+                updateDisplay(false, new ChangeEvent(evt));
+                break;
+            case OctSettings.PROP_X_SCALE:
+            case OctSettings.PROP_Y_SCALE:
+                updateDisplay(true, new ChangeEvent(evt));
+            default:
+                break;
             }
         });
 
@@ -96,14 +99,67 @@ public class OCTDisplayPanel extends JLabel {
         lrpSettings.addPropertyChangeListener(e -> {
             if (lrps.getSelectedIndex() > -1) {
                 switch (e.getPropertyName()) {
-                    case LrpSettings.PROP_LRP_HEIGHT:
-                    case LrpSettings.PROP_LRP_WIDTH:
-                        updateDisplay(true, new ChangeEvent(e));
-                    default:
-                        break;
+                case LrpSettings.PROP_LRP_HEIGHT:
+                case LrpSettings.PROP_LRP_WIDTH:
+                    updateDisplay(true, new ChangeEvent(e));
+                default:
+                    break;
                 }
             }
         });
+
+        //add click monitor for ensuring focus is gained when user clicks on OCT
+        addMouseListener(new MouseInputAdapter() {
+            @Override public void mouseClicked(MouseEvent e) {
+                requestFocusInWindow();
+            }
+        });
+
+        //listen for key events to move the LRP
+        addKeyListener(new KeyAdapter() {
+            @Override public void keyPressed(KeyEvent e) {
+                if (Collections.getInstance().getLrpCollection().getFovealLrp() == null
+                        || !hasFocus()) {
+                    return;
+                }
+                int centerXPosition = Collections.getInstance().getLrpCollection().getFovealLrp().getLrpCenterXPosition();
+                int centerYPosition = Collections.getInstance().getLrpCollection().getFovealLrp().getLrpCenterYPosition();
+                switch (e.getKeyCode()) {
+                case KeyEvent.VK_UP:
+                    centerYPosition--;
+                    break;
+                case KeyEvent.VK_DOWN:
+                    centerYPosition++;
+                    break;
+                case KeyEvent.VK_LEFT:
+                    centerXPosition--;
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    centerXPosition++;
+                    break;
+                default:
+                    break;
+                }
+                if (centerXPosition != Collections.getInstance().getLrpCollection().getFovealLrp().getLrpCenterXPosition()
+                        || centerYPosition != Collections.getInstance().getLrpCollection().getFovealLrp().getLrpCenterYPosition()) {
+                    Lrp newLrp;
+                    try {
+                        newLrp = new Lrp(
+                                ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode() == AnalysisMode.FREE_FORM ? "LRP" : "Fovea",
+                                centerXPosition,
+                                centerYPosition,
+                                ModelsCollection.getInstance().getLrpSettings().getLrpWidth(),
+                                ModelsCollection.getInstance().getLrpSettings().getLrpHeight(),
+                                LrpType.FOVEAL);
+                    } catch (LRPBoundryViolationException e1) {
+                        JOptionPane.showMessageDialog(null, e1.getMessage() + " Try again.", "LRP generation error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
+                    Collections.getInstance().getLrpCollection().setLrps(Arrays.asList(newLrp));
+                }
+            }
+        });
+
     }
 
     public static OCTDisplayPanel getInstance() {
@@ -137,9 +193,9 @@ public class OCTDisplayPanel extends JLabel {
 
         //order overlay layers and draw to image accordingly
         collections.getOverlaysStream()
-                .filter(OCTOverlay::display)
-                .sorted(Comparator.comparingInt(OCTOverlay::getZValue))
-                .forEach((OCTOverlay overlay) -> overlay.drawOverlay(octBase));
+                   .filter(OCTOverlay::display)
+                   .sorted(Comparator.comparingInt(OCTOverlay::getZValue))
+                   .forEach((OCTOverlay overlay) -> overlay.drawOverlay(octBase));
         //finally set image to be drawn to the screen
         setIcon(new ImageIcon(octBase));
         //notify listeners that the Panel has updated the image

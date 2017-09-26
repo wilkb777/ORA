@@ -8,20 +8,15 @@ package com.bwc.ora.views;
 import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.LrpCollection;
 import com.bwc.ora.collections.OctDrawnPointCollection;
-import com.bwc.ora.models.LrpSeries;
-import com.bwc.ora.models.LrpSettings;
+import com.bwc.ora.models.*;
 import com.bwc.ora.collections.ModelsCollection;
-import com.bwc.ora.models.OctSettings;
-import com.bwc.ora.models.RetinalBand;
 import com.bwc.ora.views.render.HighlightXYRenderer;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
@@ -31,6 +26,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.MouseInputAdapter;
 
 import org.jfree.chart.*;
 import org.jfree.chart.annotations.XYPointerAnnotation;
@@ -68,6 +64,9 @@ public class LrpDisplayFrame extends JFrame {
         this.setSize(800, 800);
         add(chartPanel, BorderLayout.CENTER);
 
+        //make it so this jframe can't gain focus
+        setFocusableWindowState(false);
+
         //add listener to check to see which LRP should be displayed
         lrps.addListSelectionListener((ListSelectionEvent e) -> {
             if (!e.getValueIsAdjusting()) {
@@ -91,15 +90,15 @@ public class LrpDisplayFrame extends JFrame {
         octSettings.addPropertyChangeListener(e -> {
             if (lrps.getSelectedIndex() > -1) {
                 switch (e.getPropertyName()) {
-                    case OctSettings.PROP_APPLY_CONTRAST_ADJUSTMENT:
-                    case OctSettings.PROP_APPLY_NOISE_REDUCTION:
-                    case OctSettings.PROP_DISPLAY_LOG_OCT:
-                    case OctSettings.PROP_SHARPEN_KERNEL_RADIUS:
-                    case OctSettings.PROP_SHARPEN_WEIGHT:
-                    case OctSettings.PROP_SMOOTHING_FACTOR:
-                        updateSeries(lrps.getSelectedValue().getAllSeriesData());
-                    default:
-                        break;
+                case OctSettings.PROP_APPLY_CONTRAST_ADJUSTMENT:
+                case OctSettings.PROP_APPLY_NOISE_REDUCTION:
+                case OctSettings.PROP_DISPLAY_LOG_OCT:
+                case OctSettings.PROP_SHARPEN_KERNEL_RADIUS:
+                case OctSettings.PROP_SHARPEN_WEIGHT:
+                case OctSettings.PROP_SMOOTHING_FACTOR:
+                    updateSeries(lrps.getSelectedValue().getAllSeriesData());
+                default:
+                    break;
                 }
             }
         });
@@ -220,8 +219,8 @@ public class LrpDisplayFrame extends JFrame {
 
         //if there were any previous annotations to the LRP add them to the chart
         lrps.getSelectedValue()
-                .getAnnotations()
-                .forEach(chart.getXYPlot()::addAnnotation);
+            .getAnnotations()
+            .forEach(chart.getXYPlot()::addAnnotation);
     }
 
     private void updateSeries(LrpSeries series) {

@@ -18,7 +18,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagLayout;
 import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -51,8 +50,9 @@ public class LrpSettingsPanel extends JPanel {
     private final JButton runAnalysisButton;
     private final JSlider lrpSmoothingSlider;
     private final String title;
-    private final String anchorLrpButtonFreeFormText;
+    private final String lrpButtonFreeFormText;
     private final String anchorLrpButtonPreforrmattedText;
+    private final String runAnalysisButtonText;
 
     public LrpSettingsPanel() {
         super();
@@ -68,8 +68,9 @@ public class LrpSettingsPanel extends JPanel {
         this.lrpSmoothingSlider = new JSlider(SwingConstants.HORIZONTAL, range[0], range[1], settings.getLrpSmoothingFactor());
         this.lrpWidthField = new JComboBox<>(settings.getLrpWidthOptions());
         this.lrpWidthField.setSelectedItem(settings.getLrpWidth());
-        this.runAnalysisButton = new JButton("Run Analysis");
-        this.anchorLrpButtonFreeFormText = "<html><center>Generate</center><center>Freeform LRP</center></html>";
+        this.runAnalysisButtonText = "Run Analysis";
+        this.runAnalysisButton = new JButton(runAnalysisButtonText);
+        this.lrpButtonFreeFormText = "<html><center>Generate</center><center>Freeform LRP</center></html>";
         this.anchorLrpButtonPreforrmattedText = "<html><center>Generate</center><center>Anchor LRP</center></html>";
         this.anchorLrpButton = new JButton(anchorLrpButtonPreforrmattedText);
         init();
@@ -236,15 +237,21 @@ public class LrpSettingsPanel extends JPanel {
                 switch (analysisSettings.getCurrentAnalysisMode()) {
                 case PREFORMATTED:
                     enableNumberLRPInput();
-                    anchorLrpButton.setText(anchorLrpButtonPreforrmattedText);
+                    showAnchorLrpButton();
+                    disableRunAnalysisButton();
+                    runAnalysisButton.setText(runAnalysisButtonText);
                     break;
                 case FREE_FORM:
                     disableNumberLRPInput();
-                    anchorLrpButton.setText(anchorLrpButtonFreeFormText);
+                    hideAnchorLrpButton();
+                    enableRunAnalysisButton();
+                    runAnalysisButton.setText(lrpButtonFreeFormText);
                     break;
                 case EZ_DETECTION:
                     enableNumberLRPInput();
-                    anchorLrpButton.setText(anchorLrpButtonPreforrmattedText);
+                    showAnchorLrpButton();
+                    disableRunAnalysisButton();
+                    runAnalysisButton.setText(runAnalysisButtonText);
                     break;
                 }
             }
@@ -253,11 +260,11 @@ public class LrpSettingsPanel extends JPanel {
         anchorLrpButton.addActionListener(evt -> {
             switch (analysisSettings.getCurrentAnalysisMode()) {
             case PREFORMATTED:
-            case FREE_FORM:
                 OraUtils.generateAnchorLrp(false, runAnalysisButton);
                 break;
             case EZ_DETECTION:
-                OraUtils.generateAnchorLrp(false, runAnalysisButton);
+                break;
+            default:
                 break;
             }
 
@@ -288,11 +295,23 @@ public class LrpSettingsPanel extends JPanel {
         runAnalysisButton.setEnabled(false);
     }
 
+    public void enableRunAnalysisButton() {
+        runAnalysisButton.setEnabled(true);
+    }
+
     public void disableNumberLRPInput() {
         numLrpField.setEnabled(false);
     }
 
     public void enableNumberLRPInput() {
         numLrpField.setEnabled(true);
+    }
+
+    public void hideAnchorLrpButton() {
+        anchorLrpButton.setVisible(false);
+    }
+
+    public void showAnchorLrpButton() {
+        anchorLrpButton.setVisible(true);
     }
 }
