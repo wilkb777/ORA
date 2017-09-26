@@ -8,28 +8,32 @@ package com.bwc.ora;
 import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.ViewsCollection;
 import com.bwc.ora.io.TiffReader;
-import com.bwc.ora.models.DisplaySettings;
+import com.bwc.ora.models.*;
 import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.views.MousePositionListeningLabel;
 import com.bwc.ora.views.toolbars.LrpSettingsPanel;
 import com.bwc.ora.views.OCTDisplayPanel;
 import com.bwc.ora.views.OraMenuBar;
 import com.bwc.ora.views.toolbars.OctSettingsPanel;
-import com.bwc.ora.models.Oct;
 import com.bwc.ora.views.LrpDisplayFrame;
 import com.bwc.ora.views.toolbars.AnalysisPanel;
 import com.bwc.ora.views.toolbars.ToolbarUtilities;
 
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.stream.Stream;
 import javax.swing.*;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.TitledBorder;
 import javax.swing.event.ChangeEvent;
+import javax.swing.event.MouseInputAdapter;
 
 /**
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
@@ -139,16 +143,17 @@ public class Ora extends JFrame {
         //set up the image display
         JPanel tmpPanel = new JPanel(new GridBagLayout());
         tmpPanel.add(disp);
+
         JScrollPane scrollPane = new JScrollPane(tmpPanel);
         disp.addChangeListener((ChangeEvent e) -> {
             GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             if (e.getSource() instanceof PropertyChangeEvent
                     && ((PropertyChangeEvent) e.getSource()).getPropertyName().equals(Oct.PROP_LOG_OCT)) {
                 int width = Oct.getInstance().getImageWidth() < 0.95D * (double) gd.getDisplayMode().getWidth() ?
-                        Oct.getInstance().getImageWidth() : (int) (0.95D * gd.getDisplayMode().getWidth());
+                            Oct.getInstance().getImageWidth() : (int) (0.95D * gd.getDisplayMode().getWidth());
                 int height = Oct.getInstance().getImageHeight() < 0.70D * (double) gd.getDisplayMode().getHeight() ?
-                        Oct.getInstance().getImageHeight() : (int) (0.70D * gd.getDisplayMode().getHeight());
-                scrollPane.setPreferredSize(new Dimension(width, height));
+                             Oct.getInstance().getImageHeight() : (int) (0.70D * gd.getDisplayMode().getHeight());
+                scrollPane.setPreferredSize(new Dimension(width + 50, height + 50));
                 pack();
             } else {
                 scrollPane.revalidate();
@@ -170,9 +175,9 @@ public class Ora extends JFrame {
         settingsTabPane.addTab(lrpSettingsPanel.getTitle(), lrpSettingsPanel);
         settingsTabPane.addTab(controlsPanel.getTitle(), controlsPanel);
         int maxToolBarWidth = Stream.of(lrpSettingsPanel, octSettingsPanel)
-                .mapToInt(p -> (int) Math.round(p.getPreferredSize().getWidth()))
-                .max()
-                .getAsInt();
+                                    .mapToInt(p -> (int) Math.round(p.getPreferredSize().getWidth()))
+                                    .max()
+                                    .getAsInt();
         settingsTabPane.setPreferredSize(new Dimension(maxToolBarWidth, (int) (settingsTabPane.getPreferredSize().height * 1.2D)));
         add(settingsTabPane);
 

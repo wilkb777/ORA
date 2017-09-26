@@ -6,6 +6,7 @@
 package com.bwc.ora.collections;
 
 import com.bwc.ora.OraUtils;
+import com.bwc.ora.models.AnalysisMode;
 import com.bwc.ora.views.toolbars.AnalysisPanel;
 import com.bwc.ora.views.toolbars.LrpSettingsPanel;
 import com.bwc.ora.views.toolbars.OctSettingsPanel;
@@ -63,6 +64,10 @@ public class ViewsCollection extends ArrayList<JPanel> {
             OraUtils.setEnabled(container, true);
             if (container instanceof LrpSettingsPanel) {
                 ((LrpSettingsPanel) container).disableRunAnalysisButton();
+                if(ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode() == AnalysisMode.FREE_FORM){
+                    ((LrpSettingsPanel) container).disableNumberLRPInput();
+                    ((LrpSettingsPanel) container).enableRunAnalysisButton();
+                }
             }
         });
     }

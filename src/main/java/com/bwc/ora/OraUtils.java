@@ -11,17 +11,20 @@ import com.bwc.ora.io.ExportWriter;
 import com.bwc.ora.io.TiffReader;
 import com.bwc.ora.models.*;
 import com.bwc.ora.collections.ModelsCollection;
+import com.bwc.ora.models.exception.LRPBoundryViolationException;
 import com.bwc.ora.views.LrpDisplayFrame;
 import com.bwc.ora.views.OCTDisplayPanel;
+import org.apache.commons.io.FileUtils;
 
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -45,13 +48,20 @@ public class OraUtils {
             //read in image and ready for analysis
             OraUtils.loadOctFromTiffFile(new File(OraUtils.class.getClassLoader().getResource("KS_10238_OS_L_7_90_05_529disp_reg_fr1-25_AL21p35.tif").toURI()),
                     Oct.getInstance());
-            Collections.getInstance().resetCollectionsForNewAnalysis();
-            ModelsCollection.getInstance().resetSettingsToDefault();
-        } catch (IOException | URISyntaxException ex) {
-            JOptionPane.showMessageDialog(null, "Image loading failed,"
-                    + " reason: " + ex.getMessage(), "Loading error!", JOptionPane.ERROR_MESSAGE
-            );
+        } catch (Exception ex) {
+            try {
+                File tmpOct = File.createTempFile("test_oct_", ".tif");
+                FileUtils.copyInputStreamToFile(OraUtils.class.getClassLoader().getResourceAsStream("KS_10238_OS_L_7_90_05_529disp_reg_fr1-25_AL21p35.tif"),
+                        tmpOct);
+                OraUtils.loadOctFromTiffFile(tmpOct, Oct.getInstance());
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Image loading failed,"
+                        + " reason: " + ex.getMessage(), "Loading error!", JOptionPane.ERROR_MESSAGE
+                );
+            }
         }
+        Collections.getInstance().resetCollectionsForNewAnalysis();
+        ModelsCollection.getInstance().resetSettingsToDefault();
     };
 
     public static final ActionListener newAnalysisActionListener = evt -> {
@@ -148,7 +158,13 @@ public class OraUtils {
     public static void generateAnchorLrp(boolean assisted, JButton buttonToEnable) {
         OCTDisplayPanel lrpPanel = OCTDisplayPanel.getInstance();
         LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
-        JOptionPane.showMessageDialog(null, "Click on the OCT where\nthe anchor LRP should go.", "Click anchor point", JOptionPane.INFORMATION_MESSAGE);
+        AnalysisSettings analysisSettings = ModelsCollection.getInstance().getAnalysisSettings();
+        JOptionPane.showMessageDialog(null,
+                "Click on the OCT where\nthe " + (analysisSettings.getCurrentAnalysisMode() == AnalysisMode.FREE_FORM ? "" : "anchor ") + "LRP should go.\n"
+                        + "Use the arrow keys to move the LRP.\n"
+                        + "If any setting are adjusted while in this mode\n"
+                        + "you'll have to click the mouse on the OCT to regain\n"
+                        + "the ability to move the LRP with the arrow keys.", "Click anchor point", JOptionPane.INFORMATION_MESSAGE);
         if (assisted) {
             //todo add in assistive fovea finding
         } else {
@@ -159,21 +175,28 @@ public class OraUtils {
                 public void mouseClicked(MouseEvent e) {
                     Point clickPoint;
                     if ((clickPoint = lrpPanel.convertPanelPointToOctPoint(e.getPoint())) != null) {
-                        lrpCollection.setLrps(Arrays.asList(
-                                new Lrp("Fovea",
-                                        clickPoint.x,
-                                        lrpSettings.getLrpWidth(),
-                                        lrpSettings.getLrpHeight(),
-                                        LrpType.FOVEAL)
-                        ));
-                        lrpCollection.setSelectedIndex(0);
-                        lrpPanel.removeMouseListener(this);
-                        if (buttonToEnable != null) {
-                            buttonToEnable.setEnabled(true);
+                        Lrp newLrp;
+                        try {
+                            newLrp = new Lrp(analysisSettings.getCurrentAnalysisMode() == AnalysisMode.FREE_FORM ? "LRP" : "Fovea",
+                                    clickPoint.x,
+                                    clickPoint.y,
+                                    lrpSettings.getLrpWidth(),
+                                    lrpSettings.getLrpHeight(),
+                                    LrpType.FOVEAL);
+                            lrpCollection.setLrps(Arrays.asList(newLrp));
+                            lrpPanel.removeMouseListener(this);
+                            if (buttonToEnable != null) {
+                                buttonToEnable.setEnabled(true);
+                            }
+                        } catch (LRPBoundryViolationException e1) {
+                            JOptionPane.showMessageDialog(null, e1.getMessage() + " Try again.", "LRP generation error", JOptionPane.ERROR_MESSAGE);
+                            return;
                         }
+
                     }
                 }
             });
+
         }
     }
 
@@ -195,6 +218,7 @@ public class OraUtils {
             lrpPosToLeftOfFovea -= distanceBetweenLrps;
             lrps.push(new Lrp("Left " + ((lrps.size() + 1) / 2),
                     lrpPosToLeftOfFovea,
+                    fovealLrp.getLrpCenterYPosition(),
                     lrpSettings.getLrpWidth(),
                     lrpSettings.getLrpHeight(),
                     LrpType.PERIPHERAL));
@@ -203,6 +227,7 @@ public class OraUtils {
             if (lrps.size() < numberOfLrpTotal) {
                 lrps.add(new Lrp("Right " + (lrps.size() / 2),
                         lrpPosToRightOfFovea,
+                        fovealLrp.getLrpCenterYPosition(),
                         lrpSettings.getLrpWidth(),
                         lrpSettings.getLrpHeight(),
                         LrpType.PERIPHERAL));
@@ -234,24 +259,6 @@ public class OraUtils {
                 setEnabled(child, enabled);
             }
         }
-    }
-
-    public static void runAnalysis() {
-        OctSettings octSettings = ModelsCollection.getInstance().getOctSettings();
-        if (!(octSettings.getyScale() > 0 && octSettings.getxScale() > 0)) {
-            throw new IllegalArgumentException("X and Y scale must be positive, non-zero decimal numbers.");
-        }
-
-        /*
-         Based on the current settings generate the appropriate number of LRPs for the user to analyze
-         */
-        setLrpsForAnalysis();
-
-        //disable settings panels so no changes to the settings can be made
-        Collections.getInstance().getViewsCollection().disableViewsInputs();
-
-        //move to analysis tab
-        Collections.getInstance().getViewsCollection().setAnalysisTabAsSelectedTab();
     }
 
 }

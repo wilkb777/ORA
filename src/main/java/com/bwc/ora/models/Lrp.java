@@ -7,6 +7,8 @@ package com.bwc.ora.models;
 
 import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.ip.ImageUtils;
+import com.bwc.ora.models.exception.LRPBoundryViolationException;
+import com.bwc.ora.views.OCTDisplayPanel;
 import com.bwc.ora.views.OCTOverlay;
 
 import java.awt.Color;
@@ -37,14 +39,27 @@ public class Lrp extends Rectangle implements OCTOverlay {
     private final String title;
     private final LrpType type;
     private boolean display = false;
-    private static final Oct oct = Oct.getInstance();
     private final int lrpCenterXPosition;
+    private final int lrpCenterYPosition;
     private List<XYPointerAnnotation> annotations = new LinkedList<>();
     private double smoothingAlpha;
 
-    public Lrp(String title, int x, int width, int height, LrpType type) {
-        super(x - ((width - 1) / 2), (oct.getImageHeight() / 2) - (height / 2), width, height);
+    public Lrp(String title, int x, int y, int width, int height, LrpType type) {
+        super(x - ((width - 1) / 2), y - (height / 2), width, height);
+        if(this.getMinX() < 0 ){
+            throw new LRPBoundryViolationException("X value for LRP too small given settings (i.e. center X position - 0.5 * width < 0 )");
+        }
+        if(this.getMaxX() >= Oct.getInstance().getImageWidth()){
+            throw new LRPBoundryViolationException("X value for LRP too large given settings (i.e. center X position + 0.5 * width >= OCT width )");
+        }
+        if(this.getMinY() < 0 ){
+            throw new LRPBoundryViolationException("Y value for LRP too small given settings (i.e. center Y position - 0.5 * height < 0 )");
+        }
+        if(this.getMaxY() >= Oct.getInstance().getImageHeight()){
+            throw new LRPBoundryViolationException("Y value for LRP too large given settings (i.e. center Y position + 0.5 * height >= OCT height )");
+        }
         lrpCenterXPosition = x;
+        lrpCenterYPosition = y;
         this.title = title;
         this.type = type;
         LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
@@ -53,19 +68,19 @@ public class Lrp extends Rectangle implements OCTOverlay {
         //add listener to check for updates to lrp settings to change lrp
         lrpSettings.addFirstPriorityPropertyChangeListener(e -> {
             switch (e.getPropertyName()) {
-                case LrpSettings.PROP_LRP_SMOOTHING_FACTOR:
-                    setSmoothingAlpha(lrpSettings.getLrpSmoothingFactor());
-                    break;
-                case LrpSettings.PROP_LRP_HEIGHT:
-                    this.height = lrpSettings.getLrpHeight();
-                    this.y = (oct.getImageHeight() / 2) - (this.height / 2);
-                    break;
-                case LrpSettings.PROP_LRP_WIDTH:
-                    this.width = lrpSettings.getLrpWidth();
-                    this.x = lrpCenterXPosition - ((this.width - 1) / 2);
-                    break;
-                default:
-                    break;
+            case LrpSettings.PROP_LRP_SMOOTHING_FACTOR:
+                setSmoothingAlpha(lrpSettings.getLrpSmoothingFactor());
+                break;
+            case LrpSettings.PROP_LRP_HEIGHT:
+                this.height = lrpSettings.getLrpHeight();
+                this.y = lrpCenterYPosition - (this.height / 2);
+                break;
+            case LrpSettings.PROP_LRP_WIDTH:
+                this.width = lrpSettings.getLrpWidth();
+                this.x = lrpCenterXPosition - ((this.width - 1) / 2);
+                break;
+            default:
+                break;
             }
         });
     }
@@ -85,18 +100,17 @@ public class Lrp extends Rectangle implements OCTOverlay {
      */
     private int[] getIntensityValues() {
 
-        int[] rgbArray = oct.getTransformedOct().getRGB(x, y, width, height, null, 0, width);
+        int[] rgbArray = Oct.getInstance().getTransformedOct().getRGB(x, y, width, height, null, 0, width);
 
         return IntStream.range(0, height)
-                .map(scanY
-                                -> (int) Math.round(
-                        Arrays.stream(rgbArray, width * scanY, width * (scanY + 1))
-                                .map(ImageUtils::calculateGrayScaleValue)
-                                .average()
-                                .orElse(0)
+                        .map(scanY -> (int) Math.round(
+                                Arrays.stream(rgbArray, width * scanY, width * (scanY + 1))
+                                      .map(ImageUtils::calculateGrayScaleValue)
+                                      .average()
+                                      .orElse(0)
+                                )
                         )
-                )
-                .toArray();
+                        .toArray();
     }
 
     /**
@@ -253,9 +267,9 @@ public class Lrp extends Rectangle implements OCTOverlay {
                     break;
                 } else {
                     if (leftPoint.getYValue() < halfMaxYValue) {
-//                        System.out.println("Left X for peak (" + peak.getXValue() + "," + peak.getYValue() + "): ");
+                        //                        System.out.println("Left X for peak (" + peak.getXValue() + "," + peak.getYValue() + "): ");
                         leftX = calculateXFromYForLineWithTwoPoints(leftPoint, prevPoint, halfMaxYValue);
-//                        System.out.println("    Left X: (" + leftX + "," + halfMaxYValue + "): ");
+                        //                        System.out.println("    Left X: (" + leftX + "," + halfMaxYValue + "): ");
                         break;
                     } else {
                         prevPoint = leftPoint;
@@ -271,9 +285,9 @@ public class Lrp extends Rectangle implements OCTOverlay {
                     break;
                 } else {
                     if (rightPoint.getYValue() < halfMaxYValue) {
-//                        System.out.println("Right X for peak (" + peak.getXValue() + "," + peak.getYValue() + "): ");
+                        //                        System.out.println("Right X for peak (" + peak.getXValue() + "," + peak.getYValue() + "): ");
                         rightX = calculateXFromYForLineWithTwoPoints(rightPoint, prevPoint, halfMaxYValue);
-//                        System.out.println("    Right X: (" + leftX + "," + halfMaxYValue + "): ");
+                        //                        System.out.println("    Right X: (" + leftX + "," + halfMaxYValue + "): ");
                         break;
                     } else {
                         prevPoint = rightPoint;
@@ -290,14 +304,14 @@ public class Lrp extends Rectangle implements OCTOverlay {
     }
 
     private static double calculateXFromYForLineWithTwoPoints(XYDataItem pt1, XYDataItem pt2, double y) {
-//        System.out.println("    P1: (" + pt1.getXValue() + "," + pt1.getYValue() + ")");
-//        System.out.println("    P2: (" + pt2.getXValue() + "," + pt2.getYValue() + ")");
+        //        System.out.println("    P1: (" + pt1.getXValue() + "," + pt1.getYValue() + ")");
+        //        System.out.println("    P2: (" + pt2.getXValue() + "," + pt2.getYValue() + ")");
         //calculate slope 
         double slope = (pt1.getYValue() - pt2.getYValue()) / (pt1.getXValue() - pt2.getXValue());
-//        System.out.println("    Slope: " + slope);
+        //        System.out.println("    Slope: " + slope);
         //calculate y value at y-intercept (aka b)
         double yint = pt1.getYValue() - (slope * pt1.getXValue());
-//        System.out.println("    Y-int: " + yint);
+        //        System.out.println("    Y-int: " + yint);
         //return 
         return (y - yint) / slope;
     }
@@ -362,7 +376,7 @@ public class Lrp extends Rectangle implements OCTOverlay {
         Graphics2D graphics = baseImg.createGraphics();
         graphics.setColor(Color.green);
         graphics.draw(this);
-//        System.out.println("Drawing selection on OCT...");
+        //        System.out.println("Drawing selection on OCT...");
     }
 
     @Override
@@ -392,4 +406,7 @@ public class Lrp extends Rectangle implements OCTOverlay {
         this.annotations = annotations;
     }
 
+    public int getLrpCenterYPosition() {
+        return lrpCenterYPosition;
+    }
 }

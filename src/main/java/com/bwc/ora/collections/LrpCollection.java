@@ -94,7 +94,6 @@ public class LrpCollection extends JList<Lrp> {
         }
         super.setSelectedIndex(index);
         getSelectedValue().setDisplay(true);
-        System.out.println("Set LRP to display!");
     }
 
     public void selectNextLrp() {
