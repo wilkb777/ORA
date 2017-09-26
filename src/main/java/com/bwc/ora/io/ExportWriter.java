@@ -43,6 +43,8 @@ public class ExportWriter {
             pw.println(LrpSettings.PROP_NUMBER_OF_LRP + "," + String.valueOf(lrpSettings.getNumberOfLrp()));
             pw.println("LRP center X positions,"
                     + lrps.stream().map(Lrp::getLrpCenterXPosition).map(String::valueOf).collect(Collectors.joining(",")));
+            pw.println("LRP center Y positions,"
+                    + lrps.stream().map(Lrp::getLrpCenterYPosition).map(String::valueOf).collect(Collectors.joining(",")));
 
             //add oct properties
             pw.println(OctSettings.PROP_X_SCALE + "," + df.format(octSettings.getxScale()));
