@@ -308,10 +308,10 @@ public class LrpSettingsPanel extends JPanel {
     }
 
     public void hideAnchorLrpButton() {
-        anchorLrpButton.setVisible(false);
+        anchorLrpButton.setEnabled(false);
     }
 
     public void showAnchorLrpButton() {
-        anchorLrpButton.setVisible(true);
+        anchorLrpButton.setEnabled(true);
     }
 }
