@@ -13,7 +13,7 @@ import javax.swing.*;
 public class AnalysisPresetsMenu extends JMenu {
     private JRadioButtonMenuItem freeformCheckBox = new JRadioButtonMenuItem(AnalysisMode.FREE_FORM.getModeText(),
             false);
-    private JRadioButtonMenuItem ezCheckBox = new JRadioButtonMenuItem(AnalysisMode.EZ_DETECTION.getModeText(), false);
+    private JRadioButtonMenuItem ezCheckBox = new JRadioButtonMenuItem(AnalysisMode.MULTI_LRP_FREE_FORM.getModeText(), false);
     private JRadioButtonMenuItem preformattedCheckBox = new JRadioButtonMenuItem(
             AnalysisMode.PREFORMATTED.getModeText(), true);
     private AnalysisSettings analysisSettings = ModelsCollection.getInstance().getAnalysisSettings();
@@ -38,7 +38,7 @@ public class AnalysisPresetsMenu extends JMenu {
 
     private void connectSettingsToModel() {
         freeformCheckBox.addActionListener(evt -> analysisSettings.setCurrentAnalysisMode(AnalysisMode.FREE_FORM, true));
-        ezCheckBox.addActionListener(evt -> analysisSettings.setCurrentAnalysisMode(AnalysisMode.EZ_DETECTION, true));
+        ezCheckBox.addActionListener(evt -> analysisSettings.setCurrentAnalysisMode(AnalysisMode.MULTI_LRP_FREE_FORM, true));
         preformattedCheckBox.addActionListener(evt -> analysisSettings.setCurrentAnalysisMode(AnalysisMode.PREFORMATTED, true));
         analysisSettings.addPropertyChangeListener(evt -> {
             if(AnalysisSettings.PROP_RESET_TO_DEFAULT.equals(evt.getPropertyName())){
@@ -49,7 +49,7 @@ public class AnalysisPresetsMenu extends JMenu {
                 case FREE_FORM:
                     freeformCheckBox.setSelected(true);
                     break;
-                case EZ_DETECTION:
+                case MULTI_LRP_FREE_FORM:
                     ezCheckBox.setSelected(true);
                     break;
                 }
@@ -73,7 +73,7 @@ public class AnalysisPresetsMenu extends JMenu {
                     case FREE_FORM:
                         freeformCheckBox.setSelected(true);
                         break;
-                    case EZ_DETECTION:
+                    case MULTI_LRP_FREE_FORM:
                         ezCheckBox.setSelected(true);
                         break;
                     }

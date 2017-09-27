@@ -7,7 +7,7 @@ package com.bwc.ora.views.toolbars;
 
 import com.bwc.ora.OraUtils;
 import com.bwc.ora.analysis.AnalysisConditionsNotMetException;
-import com.bwc.ora.analysis.EZAnalysis;
+import com.bwc.ora.analysis.MultiLRPFreeFormAnalysis;
 import com.bwc.ora.analysis.FreeFormAnalysis;
 import com.bwc.ora.analysis.PreformattedAnalysis;
 import com.bwc.ora.models.AnalysisSettings;
@@ -231,26 +231,30 @@ public class LrpSettingsPanel extends JPanel {
             }
         });
 
+        //set buttons and fields that should be enabled or disabled based on the analysis mode
         AnalysisSettings analysisSettings = ModelsCollection.getInstance().getAnalysisSettings();
         analysisSettings.addPropertyChangeListener(evt -> {
             if (AnalysisSettings.PROP_CURRENT_ANALYSIS_MODE.equals(evt.getPropertyName())) {
                 switch (analysisSettings.getCurrentAnalysisMode()) {
                 case PREFORMATTED:
                     enableNumberLRPInput();
-                    showAnchorLrpButton();
+                    enableAnchorLrpButton();
+                    enableLRPSeperationDistanceInput();
                     disableRunAnalysisButton();
                     runAnalysisButton.setText(runAnalysisButtonText);
                     break;
                 case FREE_FORM:
                     disableNumberLRPInput();
-                    hideAnchorLrpButton();
+                    disableAnchorLrpButton();
+                    disableLRPSeperationDistanceInput();
                     enableRunAnalysisButton();
                     runAnalysisButton.setText(lrpButtonFreeFormText);
                     break;
-                case EZ_DETECTION:
+                case MULTI_LRP_FREE_FORM:
                     enableNumberLRPInput();
-                    showAnchorLrpButton();
-                    disableRunAnalysisButton();
+                    disableAnchorLrpButton();
+                    disableLRPSeperationDistanceInput();
+                    enableRunAnalysisButton();
                     runAnalysisButton.setText(runAnalysisButtonText);
                     break;
                 }
@@ -258,16 +262,7 @@ public class LrpSettingsPanel extends JPanel {
         });
 
         anchorLrpButton.addActionListener(evt -> {
-            switch (analysisSettings.getCurrentAnalysisMode()) {
-            case PREFORMATTED:
-                OraUtils.generateAnchorLrp(false, runAnalysisButton);
-                break;
-            case EZ_DETECTION:
-                break;
-            default:
-                break;
-            }
-
+            OraUtils.generateAnchorLrp(false, runAnalysisButton);
         });
 
         runAnalysisButton.addActionListener(evt -> {
@@ -279,8 +274,8 @@ public class LrpSettingsPanel extends JPanel {
                 case FREE_FORM:
                     new FreeFormAnalysis().run();
                     break;
-                case EZ_DETECTION:
-                    new EZAnalysis().run();
+                case MULTI_LRP_FREE_FORM:
+                    new MultiLRPFreeFormAnalysis().run();
                     break;
                 }
             } catch (AnalysisConditionsNotMetException e) {
@@ -307,11 +302,23 @@ public class LrpSettingsPanel extends JPanel {
         numLrpField.setEnabled(true);
     }
 
-    public void hideAnchorLrpButton() {
+    public void disableAnchorLrpButton() {
         anchorLrpButton.setEnabled(false);
     }
 
-    public void showAnchorLrpButton() {
+    public void enableAnchorLrpButton() {
         anchorLrpButton.setEnabled(true);
+    }
+
+    public void disableLRPSeperationDistanceInput() {
+        lrpSeparationDistanceField.setEnabled(false);
+        lrpSeparationDistanceInMicrons.setEnabled(false);
+        lrpSeparationDistanceInPixels.setEnabled(false);
+    }
+
+    public void enableLRPSeperationDistanceInput() {
+        lrpSeparationDistanceField.setEnabled(true);
+        lrpSeparationDistanceInMicrons.setEnabled(true);
+        lrpSeparationDistanceInPixels.setEnabled(true);
     }
 }

@@ -6,7 +6,7 @@ import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.models.LrpSettings;
 import com.bwc.ora.models.OctSettings;
 
-public class EZAnalysis implements Analysis {
+public class MultiLRPFreeFormAnalysis implements Analysis {
     @Override
     public void run() {
         OctSettings octSettings = ModelsCollection.getInstance().getOctSettings();
@@ -27,7 +27,7 @@ public class EZAnalysis implements Analysis {
         OraUtils.setLrpsForAnalysis();
 
         //disable settings panels so no changes to the settings can be made
-        Collections.getInstance().getViewsCollection().disableViewsInputs();
+        Collections.getInstance().getViewsCollection().disableSettingsTabsInputs();
 
         //move to analysis tab
         Collections.getInstance().getViewsCollection().setAnalysisTabAsSelectedTab();

@@ -4,7 +4,7 @@ package com.bwc.ora.models;
  * Created by Brandon on 5/18/2017.
  */
 public enum AnalysisMode {
-    FREE_FORM("Free Form"), PREFORMATTED("Preformatted"), EZ_DETECTION("EZ Detection");
+    FREE_FORM("Free Form"), PREFORMATTED("Preformatted"), MULTI_LRP_FREE_FORM("Multi LRP Free Form");
 
     private final String modeText;
 

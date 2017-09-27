@@ -160,7 +160,7 @@ public class OraUtils {
         LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
         AnalysisSettings analysisSettings = ModelsCollection.getInstance().getAnalysisSettings();
         JOptionPane.showMessageDialog(null,
-                "Click on the OCT where\nthe " + (analysisSettings.getCurrentAnalysisMode() == AnalysisMode.FREE_FORM ? "" : "anchor ") + "LRP should go.\n"
+                "Click on the OCT where the " + (analysisSettings.getCurrentAnalysisMode() == AnalysisMode.FREE_FORM ? "" : "anchor ") + "LRP should go.\n"
                         + "Use the arrow keys to move the LRP.\n"
                         + "If any setting are adjusted while in this mode\n"
                         + "you'll have to click the mouse on the OCT to regain\n"
@@ -245,20 +245,6 @@ public class OraUtils {
         lrpCollection.setLrps(lrps);
     }
 
-    /**
-     * Recursively enable or disable the specified container and all of its
-     * children components
-     *
-     * @param component
-     * @param enabled
-     */
-    public static void setEnabled(Component component, boolean enabled) {
-        component.setEnabled(enabled);
-        if (component instanceof Container) {
-            for (Component child : ((Container) component).getComponents()) {
-                setEnabled(child, enabled);
-            }
-        }
-    }
+
 
 }

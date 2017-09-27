@@ -11,7 +11,12 @@ import com.bwc.ora.views.toolbars.AnalysisPanel;
 import com.bwc.ora.views.toolbars.LrpSettingsPanel;
 import com.bwc.ora.views.toolbars.OctSettingsPanel;
 
+import java.awt.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import javax.swing.*;
 
 /**
@@ -20,6 +25,7 @@ import javax.swing.*;
 public class ViewsCollection extends ArrayList<JPanel> {
 
     private JTabbedPane settingsTabPane;
+    private List<Component> enabledComponents = new LinkedList<>();
 
     public void setSettingsTabPane(JTabbedPane settingsTabPane) {
         this.settingsTabPane = settingsTabPane;
@@ -46,30 +52,61 @@ public class ViewsCollection extends ArrayList<JPanel> {
     }
 
     /**
+     * Recursively enable or disable the specified container and all of its
+     * children components
+     *
+     * @param component
+     * @param enabled
+     */
+    public static void setEnabled(Component component, boolean enabled) {
+        component.setEnabled(enabled);
+        if (component instanceof Container) {
+            for (Component child : ((Container) component).getComponents()) {
+                setEnabled(child, enabled);
+            }
+        }
+    }
+
+    private LinkedList<Component> getAllComponents(final Container c) {
+        Component[] comps = c.getComponents();
+        LinkedList<Component> compList = new LinkedList<>();
+        for (Component comp : comps) {
+            compList.add(comp);
+            if (comp instanceof Container) {
+                compList.addAll(getAllComponents((Container) comp));
+            }
+        }
+        return compList;
+    }
+
+    /**
      * Recursively disable all of the input elements of all the views registered
      * with this collections.
      */
-    public void disableViewsInputs() {
-        stream()
+    public void disableSettingsTabsInputs() {
+        enabledComponents = stream()
                 .filter(container -> !(container instanceof AnalysisPanel))
-                .forEach(container -> OraUtils.setEnabled(container, false));
+                .flatMap(jPanel -> getAllComponents(jPanel).stream())
+                .filter(Component::isEnabled)
+                .collect(Collectors.toList());
+
+        enabledComponents.forEach(component -> component.setEnabled(false));
     }
 
     /**
      * Recursively enable all of the input elements of all the views registered
      * with this collections.
      */
-    public void enableViewsInputs() {
-        forEach(container -> {
-            OraUtils.setEnabled(container, true);
-            if (container instanceof LrpSettingsPanel) {
-                ((LrpSettingsPanel) container).disableRunAnalysisButton();
-                if(ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode() == AnalysisMode.FREE_FORM){
-                    ((LrpSettingsPanel) container).disableNumberLRPInput();
-                    ((LrpSettingsPanel) container).enableRunAnalysisButton();
-                }
-            }
-        });
+    public void enableSettingsTabsInputs() {
+        switch (ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode()) {
+        case FREE_FORM:
+        case MULTI_LRP_FREE_FORM:
+            enabledComponents.forEach(component -> component.setEnabled(true));
+            break;
+        default:
+            stream().forEach(jPanel -> setEnabled(jPanel, true));
+            break;
+        }
     }
 
 }

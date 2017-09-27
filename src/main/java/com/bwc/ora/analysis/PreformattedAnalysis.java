@@ -19,7 +19,7 @@ public class PreformattedAnalysis implements Analysis {
         OraUtils.setLrpsForAnalysis();
 
         //disable settings panels so no changes to the settings can be made
-        Collections.getInstance().getViewsCollection().disableViewsInputs();
+        Collections.getInstance().getViewsCollection().disableSettingsTabsInputs();
 
         //move to analysis tab
         Collections.getInstance().getViewsCollection().setAnalysisTabAsSelectedTab();
