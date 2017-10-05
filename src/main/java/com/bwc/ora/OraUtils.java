@@ -11,24 +11,17 @@ import com.bwc.ora.io.ExportWriter;
 import com.bwc.ora.io.TiffReader;
 import com.bwc.ora.models.*;
 import com.bwc.ora.collections.ModelsCollection;
-import com.bwc.ora.models.exception.LRPBoundryViolationException;
-import com.bwc.ora.views.LrpDisplayFrame;
+import com.bwc.ora.models.exception.LRPBoundaryViolationException;
 import com.bwc.ora.views.OCTDisplayPanel;
 import org.apache.commons.io.FileUtils;
 
 import java.awt.Component;
-import java.awt.Container;
-import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.*;
-import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.*;
@@ -188,7 +181,7 @@ public class OraUtils {
                             if (buttonToEnable != null) {
                                 buttonToEnable.setEnabled(true);
                             }
-                        } catch (LRPBoundryViolationException e1) {
+                        } catch (LRPBoundaryViolationException e1) {
                             JOptionPane.showMessageDialog(null, e1.getMessage() + " Try again.", "LRP generation error", JOptionPane.ERROR_MESSAGE);
                             return;
                         }

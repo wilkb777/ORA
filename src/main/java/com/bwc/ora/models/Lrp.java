@@ -7,8 +7,7 @@ package com.bwc.ora.models;
 
 import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.ip.ImageUtils;
-import com.bwc.ora.models.exception.LRPBoundryViolationException;
-import com.bwc.ora.views.OCTDisplayPanel;
+import com.bwc.ora.models.exception.LRPBoundaryViolationException;
 import com.bwc.ora.views.OCTOverlay;
 
 import java.awt.Color;
@@ -47,16 +46,16 @@ public class Lrp extends Rectangle implements OCTOverlay {
     public Lrp(String title, int x, int y, int width, int height, LrpType type) {
         super(x - ((width - 1) / 2), y - (height / 2), width, height);
         if(this.getMinX() < 0 ){
-            throw new LRPBoundryViolationException("X value for LRP too small given settings (i.e. center X position - 0.5 * width < 0 )");
+            throw new LRPBoundaryViolationException("X value for LRP too small given settings (i.e. center X position - 0.5 * width < 0 )");
         }
         if(this.getMaxX() >= Oct.getInstance().getImageWidth()){
-            throw new LRPBoundryViolationException("X value for LRP too large given settings (i.e. center X position + 0.5 * width >= OCT width )");
+            throw new LRPBoundaryViolationException("X value for LRP too large given settings (i.e. center X position + 0.5 * width >= OCT width )");
         }
         if(this.getMinY() < 0 ){
-            throw new LRPBoundryViolationException("Y value for LRP too small given settings (i.e. center Y position - 0.5 * height < 0 )");
+            throw new LRPBoundaryViolationException("Y value for LRP too small given settings (i.e. center Y position - 0.5 * height < 0 )");
         }
         if(this.getMaxY() >= Oct.getInstance().getImageHeight()){
-            throw new LRPBoundryViolationException("Y value for LRP too large given settings (i.e. center Y position + 0.5 * height >= OCT height )");
+            throw new LRPBoundaryViolationException("Y value for LRP too large given settings (i.e. center Y position + 0.5 * height >= OCT height )");
         }
         lrpCenterXPosition = x;
         lrpCenterYPosition = y;

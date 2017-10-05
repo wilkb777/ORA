@@ -5,6 +5,7 @@
  */
 package com.bwc.ora;
 
+import com.apple.eawt.Application;
 import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.ViewsCollection;
 import com.bwc.ora.io.TiffReader;
@@ -68,7 +69,12 @@ public class Ora extends JFrame {
         //config container properties
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         this.setMinimumSize(new Dimension(300, 50));
-        setIconImage(new ImageIcon(getClass().getResource("/logo.png")).getImage());
+        Image appicon = new ImageIcon(getClass().getResource("/logo.png")).getImage();
+        setIconImage(appicon);
+        if (System.getProperty("os.name").contains("OS X")){
+            Application application = Application.getApplication();
+            application.setDockIconImage(appicon);
+        }
         setLocationByPlatform(true);
 
         Container contentPane = getContentPane();

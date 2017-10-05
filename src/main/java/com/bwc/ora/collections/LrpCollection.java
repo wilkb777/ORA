@@ -7,6 +7,7 @@ package com.bwc.ora.collections;
 
 import com.bwc.ora.models.Lrp;
 import com.bwc.ora.models.LrpType;
+
 import java.awt.Component;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -21,7 +22,6 @@ import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class LrpCollection extends JList<Lrp> {
@@ -34,10 +34,23 @@ public class LrpCollection extends JList<Lrp> {
         this.setCellRenderer(new CustomeRenderer());
     }
 
+    public boolean isEmpty(){
+        return dataModel.isEmpty();
+    }
+
     public void setLrps(List<Lrp> lrps) {
         clearLrps();
         lrps.forEach(dataModel::addElement);
         this.setSelectedIndex(0);
+    }
+
+    public void setLrp(Lrp lrp, int selectionIndex) {
+        dataModel.setElementAt(lrp, selectionIndex);
+        this.setSelectedIndex(selectionIndex);
+    }
+
+    public void addLrp(Lrp lrp) {
+        dataModel.addElement(lrp);
     }
 
     public void clearLrps() {
@@ -107,7 +120,7 @@ public class LrpCollection extends JList<Lrp> {
 
     public void selectPrevLrp() {
         int curSelectionIndex = getSelectedIndex();
-        if(getModel().getSize() > 0 && curSelectionIndex > 0) {
+        if (getModel().getSize() > 0 && curSelectionIndex > 0) {
             setSelectedIndex(curSelectionIndex - 1);
         }
     }

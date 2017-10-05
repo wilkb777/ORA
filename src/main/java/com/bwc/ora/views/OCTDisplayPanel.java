@@ -11,7 +11,7 @@ import com.bwc.ora.collections.OctDrawnPointCollection;
 import com.bwc.ora.ip.ImageUtils;
 import com.bwc.ora.models.*;
 import com.bwc.ora.collections.ModelsCollection;
-import com.bwc.ora.models.exception.LRPBoundryViolationException;
+import com.bwc.ora.models.exception.LRPBoundaryViolationException;
 import com.bwc.ora.util.ChangeSupport;
 import ij.ImagePlus;
 import ij.process.ImageConverter;
@@ -118,12 +118,14 @@ public class OCTDisplayPanel extends JLabel {
         //listen for key events to move the LRP
         addKeyListener(new KeyAdapter() {
             @Override public void keyPressed(KeyEvent e) {
-                if (Collections.getInstance().getLrpCollection().getFovealLrp() == null
+                System.out.println("Collection of LRPs empty? " + Collections.getInstance().getLrpCollection().isEmpty());
+                System.out.println("HasFocus? " + hasFocus());
+                if (Collections.getInstance().getLrpCollection().isEmpty()
                         || !hasFocus()) {
                     return;
                 }
-                int centerXPosition = Collections.getInstance().getLrpCollection().getFovealLrp().getLrpCenterXPosition();
-                int centerYPosition = Collections.getInstance().getLrpCollection().getFovealLrp().getLrpCenterYPosition();
+                int centerXPosition = Collections.getInstance().getLrpCollection().getSelectedValue().getLrpCenterXPosition();
+                int centerYPosition = Collections.getInstance().getLrpCollection().getSelectedValue().getLrpCenterYPosition();
                 switch (e.getKeyCode()) {
                 case KeyEvent.VK_UP:
                     centerYPosition--;
@@ -140,22 +142,23 @@ public class OCTDisplayPanel extends JLabel {
                 default:
                     break;
                 }
-                if (centerXPosition != Collections.getInstance().getLrpCollection().getFovealLrp().getLrpCenterXPosition()
-                        || centerYPosition != Collections.getInstance().getLrpCollection().getFovealLrp().getLrpCenterYPosition()) {
+                if (centerXPosition != Collections.getInstance().getLrpCollection().getSelectedValue().getLrpCenterXPosition()
+                        || centerYPosition != Collections.getInstance().getLrpCollection().getSelectedValue().getLrpCenterYPosition()) {
                     Lrp newLrp;
                     try {
                         newLrp = new Lrp(
-                                ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode() == AnalysisMode.FREE_FORM ? "LRP" : "Fovea",
+                                Collections.getInstance().getLrpCollection().getSelectedValue().getName(),
                                 centerXPosition,
                                 centerYPosition,
                                 ModelsCollection.getInstance().getLrpSettings().getLrpWidth(),
                                 ModelsCollection.getInstance().getLrpSettings().getLrpHeight(),
                                 LrpType.FOVEAL);
-                    } catch (LRPBoundryViolationException e1) {
+                    } catch (LRPBoundaryViolationException e1) {
                         JOptionPane.showMessageDialog(null, e1.getMessage() + " Try again.", "LRP generation error", JOptionPane.ERROR_MESSAGE);
                         return;
                     }
-                    Collections.getInstance().getLrpCollection().setLrps(Arrays.asList(newLrp));
+                    Collections.getInstance().getLrpCollection().setLrp(newLrp, Collections.getInstance().getLrpCollection().getSelectedIndex());
+                    updateDisplay(true, new ChangeEvent(e));
                 }
             }
         });

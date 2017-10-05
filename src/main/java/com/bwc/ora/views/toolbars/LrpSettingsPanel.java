@@ -6,10 +6,7 @@
 package com.bwc.ora.views.toolbars;
 
 import com.bwc.ora.OraUtils;
-import com.bwc.ora.analysis.AnalysisConditionsNotMetException;
-import com.bwc.ora.analysis.MultiLRPFreeFormAnalysis;
-import com.bwc.ora.analysis.FreeFormAnalysis;
-import com.bwc.ora.analysis.PreformattedAnalysis;
+import com.bwc.ora.analysis.*;
 import com.bwc.ora.models.AnalysisSettings;
 import com.bwc.ora.models.LrpSettings;
 import com.bwc.ora.collections.ModelsCollection;
@@ -266,22 +263,7 @@ public class LrpSettingsPanel extends JPanel {
         });
 
         runAnalysisButton.addActionListener(evt -> {
-            try {
-                switch (analysisSettings.getCurrentAnalysisMode()) {
-                case PREFORMATTED:
-                    new PreformattedAnalysis().run();
-                    break;
-                case FREE_FORM:
-                    new FreeFormAnalysis().run();
-                    break;
-                case MULTI_LRP_FREE_FORM:
-                    new MultiLRPFreeFormAnalysis().run();
-                    break;
-                }
-            } catch (AnalysisConditionsNotMetException e) {
-                JOptionPane.showMessageDialog(null, "An error was encountered:\n" + e.getMessage()
-                        + "\nRevise settings and try to run the analysis again.", "Settings Error", JOptionPane.ERROR_MESSAGE);
-            }
+            AnalysisUtils.runAnalysis(analysisSettings.getCurrentAnalysisMode());
         });
 
     }

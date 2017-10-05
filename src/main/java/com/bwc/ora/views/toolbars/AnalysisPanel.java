@@ -5,8 +5,10 @@
  */
 package com.bwc.ora.views.toolbars;
 
+import com.bwc.ora.analysis.AnalysisUtils;
 import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.LrpCollection;
+import com.bwc.ora.collections.ModelsCollection;
 
 import java.awt.BorderLayout;
 import javax.swing.Box;
@@ -54,7 +56,13 @@ public class AnalysisPanel extends JPanel {
         //connect next and previous buttons for navigation during analysis
         nextLrpButton.addActionListener(evt -> lrpCollection.selectNextLrp());
         prevLrpButton.addActionListener(evt -> lrpCollection.selectPrevLrp());
-        restartButton.addActionListener(evt -> Collections.getInstance().resetCollectionsForNewAnalysis());
+
+        //setup restart analysis button
+        restartButton.addActionListener(evt -> {
+            Collections.getInstance().resetCollectionsForNewAnalysis();
+            AnalysisUtils.runAnalysis(ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode());
+        });
+
     }
 
     public String getTitle() {
