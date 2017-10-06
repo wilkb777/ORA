@@ -46,8 +46,9 @@ public class MultiLRPFreeFormAnalysis implements Analysis {
                                 clickPoint.y,
                                 lrpSettings.getLrpWidth(),
                                 lrpSettings.getLrpHeight(),
-                                LrpType.FOVEAL);
+                                LrpType.PERIPHERAL);
                         Collections.getInstance().getLrpCollection().addLrp(newLrp);
+                        Collections.getInstance().getLrpCollection().setSelectedIndex(clickCounter.get()-1);
                         if (clickCounter.get() >= lrpSettings.getNumberOfLrp()) {
                             lrpPanel.removeMouseListener(this);
                         }

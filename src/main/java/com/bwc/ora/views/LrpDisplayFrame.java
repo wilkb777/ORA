@@ -25,6 +25,8 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+import javax.swing.event.ListDataEvent;
+import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.MouseInputAdapter;
 
@@ -79,7 +81,7 @@ public class LrpDisplayFrame extends JFrame {
             }
         });
 
-        //add listener to check for updates to lrp settings to change lrp
+        //add listener to check for updates to lrp selection to change lrp
         lrpSettings.addPropertyChangeListener(e -> {
             if (lrps.getSelectedIndex() > -1) {
                 updateSeries(lrps.getSelectedValue().getAllSeriesData());
@@ -100,6 +102,20 @@ public class LrpDisplayFrame extends JFrame {
                 default:
                     break;
                 }
+            }
+        });
+
+        //add listener to see if the LRP display needs updating when a selection on oct changes
+        lrps.addListDataChangeListener(new ListDataListener() {
+            @Override
+            public void intervalAdded(ListDataEvent e) {}
+
+            @Override
+            public void intervalRemoved(ListDataEvent e) {}
+
+            @Override
+            public void contentsChanged(ListDataEvent e) {
+                updateSeries(lrps.getSelectedValue().getAllSeriesData());
             }
         });
 

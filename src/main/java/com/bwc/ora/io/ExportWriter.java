@@ -131,7 +131,7 @@ public class ExportWriter {
         //save capture of OCT as displayed to user
         File screenFile = new File(outdir, oct.getFileNameWithoutExtension() + "_" + octType + "_analysis_oct.png");
         try {
-            ImageIO.write(oct.getTransformedOct(), "png", screenFile);
+            ImageIO.write(oct.updateTransformedOct(), "png", screenFile);
         } catch (IOException e) {
             throw new RuntimeException("failed to write modified oct");
         }

@@ -7,6 +7,9 @@ package com.bwc.ora.views.toolbars;
 
 import com.bwc.ora.OraUtils;
 import com.bwc.ora.analysis.*;
+import com.bwc.ora.collections.Collections;
+import com.bwc.ora.collections.LrpCollection;
+import com.bwc.ora.models.AnalysisMode;
 import com.bwc.ora.models.AnalysisSettings;
 import com.bwc.ora.models.LrpSettings;
 import com.bwc.ora.collections.ModelsCollection;
@@ -29,6 +32,7 @@ import javax.swing.JRadioButton;
 import javax.swing.JSeparator;
 import javax.swing.JSlider;
 import javax.swing.SwingConstants;
+import javax.swing.event.ListSelectionEvent;
 
 /**
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
@@ -264,6 +268,25 @@ public class LrpSettingsPanel extends JPanel {
 
         runAnalysisButton.addActionListener(evt -> {
             AnalysisUtils.runAnalysis(analysisSettings.getCurrentAnalysisMode());
+            switch (analysisSettings.getCurrentAnalysisMode()) {
+                case PREFORMATTED:
+                    break;
+                case FREE_FORM:
+                case MULTI_LRP_FREE_FORM:
+                    disableRunAnalysisButton();
+                    runAnalysisButton.setText(runAnalysisButtonText);
+                    break;
+            }
+        });
+
+        LrpCollection lrpCollection = Collections.getInstance().getLrpCollection();
+        lrpCollection.addListSelectionListener((ListSelectionEvent e) -> {
+            if ((ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode().equals(AnalysisMode.MULTI_LRP_FREE_FORM)
+                    || ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode().equals(AnalysisMode.FREE_FORM))
+                    && lrpCollection.isEmpty()
+                    ) {
+                enableRunAnalysisButton();
+            }
         });
 
     }

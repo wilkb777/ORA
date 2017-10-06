@@ -20,6 +20,7 @@ import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
+import javax.swing.event.ListDataListener;
 
 /**
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
@@ -51,6 +52,11 @@ public class LrpCollection extends JList<Lrp> {
 
     public void addLrp(Lrp lrp) {
         dataModel.addElement(lrp);
+        System.out.println("Num lrp = "+dataModel.size());
+    }
+
+    public void addListDataChangeListener(ListDataListener l){
+        dataModel.addListDataListener(l);
     }
 
     public void clearLrps() {

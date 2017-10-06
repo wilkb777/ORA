@@ -26,6 +26,7 @@ public class Oct {
     public transient static final String PROP_LOG_OCT = "oct";
 
     private transient final PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
+    private BufferedImage transformedOct = null;
 
     /**
      * Add PropertyChangeListener.
@@ -104,12 +105,17 @@ public class Oct {
     }
 
     /**
-     * Get the OCT as transformed based on the OCT settings set in
-     * {@link OctSettings}
+     * Get the OCT as transformed based on the OCT settings set in {@link OctSettings}. Make sure to call
+     * {@link Oct#updateTransformedOct()} before calling this method in cases where it is known that the OCT settings
+     * may have been changed but the transformed OCT hasn't been updated yet.
      *
      * @return
      */
     public BufferedImage getTransformedOct() {
+        return transformedOct;
+    }
+
+    public BufferedImage updateTransformedOct(){
         if (logOctImage == null) {
             return null;
         }
@@ -119,7 +125,8 @@ public class Oct {
         for (FilterOperation op : settings.getActiveOperations()) {
             octCopy = op.performOperation(octCopy);
         }
-        return octCopy;
+        transformedOct = octCopy;
+        return transformedOct;
     }
 
     /**

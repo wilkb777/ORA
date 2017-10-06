@@ -118,8 +118,6 @@ public class OCTDisplayPanel extends JLabel {
         //listen for key events to move the LRP
         addKeyListener(new KeyAdapter() {
             @Override public void keyPressed(KeyEvent e) {
-                System.out.println("Collection of LRPs empty? " + Collections.getInstance().getLrpCollection().isEmpty());
-                System.out.println("HasFocus? " + hasFocus());
                 if (Collections.getInstance().getLrpCollection().isEmpty()
                         || !hasFocus()) {
                     return;
@@ -152,7 +150,7 @@ public class OCTDisplayPanel extends JLabel {
                                 centerYPosition,
                                 ModelsCollection.getInstance().getLrpSettings().getLrpWidth(),
                                 ModelsCollection.getInstance().getLrpSettings().getLrpHeight(),
-                                LrpType.FOVEAL);
+                                Collections.getInstance().getLrpCollection().getSelectedValue().getType());
                     } catch (LRPBoundaryViolationException e1) {
                         JOptionPane.showMessageDialog(null, e1.getMessage() + " Try again.", "LRP generation error", JOptionPane.ERROR_MESSAGE);
                         return;
@@ -180,7 +178,7 @@ public class OCTDisplayPanel extends JLabel {
         if (useCachedOct) {
             copyoct = ImageUtils.deepCopy(cachedOct);
         } else {
-            copyoct = oct.getTransformedOct();
+            copyoct = oct.updateTransformedOct();
             cachedOct = copyoct;
         }
         if (copyoct == null) {

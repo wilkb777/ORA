@@ -9,6 +9,7 @@ import com.bwc.ora.analysis.AnalysisUtils;
 import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.LrpCollection;
 import com.bwc.ora.collections.ModelsCollection;
+import com.bwc.ora.models.AnalysisMode;
 
 import java.awt.BorderLayout;
 import javax.swing.Box;
@@ -16,6 +17,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.event.ListSelectionEvent;
 
 /**
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
@@ -60,7 +62,7 @@ public class AnalysisPanel extends JPanel {
         //setup restart analysis button
         restartButton.addActionListener(evt -> {
             Collections.getInstance().resetCollectionsForNewAnalysis();
-            AnalysisUtils.runAnalysis(ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode());
+//            AnalysisUtils.runAnalysis(ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode());
         });
 
     }
