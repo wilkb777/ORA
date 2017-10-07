@@ -99,7 +99,6 @@ public class ViewsCollection extends ArrayList<JPanel> {
      */
     public void enableSettingsTabsInputs() {
         switch (ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode()) {
-        case FREE_FORM:
         case MULTI_LRP_FREE_FORM:
             enabledComponents.forEach(component -> component.setEnabled(true));
             break;

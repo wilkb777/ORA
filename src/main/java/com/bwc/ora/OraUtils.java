@@ -153,7 +153,7 @@ public class OraUtils {
         LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
         AnalysisSettings analysisSettings = ModelsCollection.getInstance().getAnalysisSettings();
         JOptionPane.showMessageDialog(null,
-                "Click on the OCT where the " + (analysisSettings.getCurrentAnalysisMode() == AnalysisMode.FREE_FORM ? "" : "anchor ") + "LRP should go.\n"
+                "Click on the OCT where the anchor LRP should go.\n"
                         + "Use the arrow keys to move the LRP.\n"
                         + "If any setting are adjusted while in this mode\n"
                         + "you'll have to click the mouse on the OCT to regain\n"
@@ -170,7 +170,7 @@ public class OraUtils {
                     if ((clickPoint = lrpPanel.convertPanelPointToOctPoint(e.getPoint())) != null) {
                         Lrp newLrp;
                         try {
-                            newLrp = new Lrp(analysisSettings.getCurrentAnalysisMode() == AnalysisMode.FREE_FORM ? "LRP" : "Fovea",
+                            newLrp = new Lrp("Fovea",
                                     clickPoint.x,
                                     clickPoint.y,
                                     lrpSettings.getLrpWidth(),

@@ -12,9 +12,6 @@ public class AnalysisUtils {
             case PREFORMATTED:
                 new PreformattedAnalysis().run();
                 break;
-            case FREE_FORM:
-                new FreeFormAnalysis().run();
-                break;
             case MULTI_LRP_FREE_FORM:
                 new MultiLRPFreeFormAnalysis().run();
                 break;

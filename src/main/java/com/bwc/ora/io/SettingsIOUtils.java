@@ -26,6 +26,9 @@ public class SettingsIOUtils {
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "ORA Analysis Setting loading failed,"
                     + " reason: " + ex.getMessage(), "Loading error!", JOptionPane.ERROR_MESSAGE);
+        } catch (NullPointerException npe) {
+            JOptionPane.showMessageDialog(null, "ORA Analysis Setting loading failed,"
+                    + " reason: OCT not loaded, settings can't be loaded without an OCT loaded", "Loading error!", JOptionPane.ERROR_MESSAGE);
         }
     };
 

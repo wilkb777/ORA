@@ -13,7 +13,7 @@ public class FileMenu extends JMenu {
     private JMenuItem testAnalysis = new JMenuItem();
     private JMenuItem open = new JMenuItem();
     private JMenuItem export = new JMenuItem();
-    private JMenuItem save = new JMenuItem();
+//    private JMenuItem save = new JMenuItem();
     private JMenuItem exit = new JMenuItem();
 
     public FileMenu() {
@@ -43,10 +43,10 @@ public class FileMenu extends JMenu {
         export.setText("Export Analysis Results");
         add(export);
 
-        save.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
-        save.setText("Save Analysis");
-        save.setEnabled(false);
-        add(save);
+//        save.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+//        save.setText("Save Analysis");
+//        save.setEnabled(false);
+//        add(save);
 
         exit.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_Q, java.awt.event.InputEvent.CTRL_MASK));
         exit.setText("Quit");
@@ -59,5 +59,6 @@ public class FileMenu extends JMenu {
         newAnalysis.addActionListener(OraUtils.newAnalysisActionListener);
         testAnalysis.addActionListener(OraUtils.testAnalysisActionListener);
         export.addActionListener(OraUtils.exportAnalysisActionListener);
+        exit.addActionListener(e -> System.exit(0));
     }
 }

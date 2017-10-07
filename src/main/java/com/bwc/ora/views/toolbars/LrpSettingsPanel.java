@@ -237,27 +237,20 @@ public class LrpSettingsPanel extends JPanel {
         analysisSettings.addPropertyChangeListener(evt -> {
             if (AnalysisSettings.PROP_CURRENT_ANALYSIS_MODE.equals(evt.getPropertyName())) {
                 switch (analysisSettings.getCurrentAnalysisMode()) {
-                case PREFORMATTED:
-                    enableNumberLRPInput();
-                    enableAnchorLrpButton();
-                    enableLRPSeperationDistanceInput();
-                    disableRunAnalysisButton();
-                    runAnalysisButton.setText(runAnalysisButtonText);
-                    break;
-                case FREE_FORM:
-                    disableNumberLRPInput();
-                    disableAnchorLrpButton();
-                    disableLRPSeperationDistanceInput();
-                    enableRunAnalysisButton();
-                    runAnalysisButton.setText(lrpButtonFreeFormText);
-                    break;
-                case MULTI_LRP_FREE_FORM:
-                    enableNumberLRPInput();
-                    disableAnchorLrpButton();
-                    disableLRPSeperationDistanceInput();
-                    enableRunAnalysisButton();
-                    runAnalysisButton.setText(runAnalysisButtonText);
-                    break;
+                    case PREFORMATTED:
+                        enableNumberLRPInput();
+                        enableAnchorLrpButton();
+                        enableLRPSeperationDistanceInput();
+                        disableRunAnalysisButton();
+                        runAnalysisButton.setText(runAnalysisButtonText);
+                        break;
+                    case MULTI_LRP_FREE_FORM:
+                        enableNumberLRPInput();
+                        disableAnchorLrpButton();
+                        disableLRPSeperationDistanceInput();
+                        enableRunAnalysisButton();
+                        runAnalysisButton.setText(runAnalysisButtonText);
+                        break;
                 }
             }
         });
@@ -271,7 +264,6 @@ public class LrpSettingsPanel extends JPanel {
             switch (analysisSettings.getCurrentAnalysisMode()) {
                 case PREFORMATTED:
                     break;
-                case FREE_FORM:
                 case MULTI_LRP_FREE_FORM:
                     disableRunAnalysisButton();
                     runAnalysisButton.setText(runAnalysisButtonText);
@@ -281,10 +273,8 @@ public class LrpSettingsPanel extends JPanel {
 
         LrpCollection lrpCollection = Collections.getInstance().getLrpCollection();
         lrpCollection.addListSelectionListener((ListSelectionEvent e) -> {
-            if ((ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode().equals(AnalysisMode.MULTI_LRP_FREE_FORM)
-                    || ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode().equals(AnalysisMode.FREE_FORM))
-                    && lrpCollection.isEmpty()
-                    ) {
+            if (ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode().equals(AnalysisMode.MULTI_LRP_FREE_FORM)
+                    && lrpCollection.isEmpty()) {
                 enableRunAnalysisButton();
             }
         });
