@@ -6,7 +6,7 @@ import javax.swing.*;
 
 public class AnalysisUtils {
 
-    public static void runAnalysis(AnalysisMode currentAnalysisMode) {
+    public static boolean runAnalysis(AnalysisMode currentAnalysisMode) {
         try {
             switch (currentAnalysisMode) {
             case PREFORMATTED:
@@ -16,9 +16,11 @@ public class AnalysisUtils {
                 new MultiLRPFreeFormAnalysis().run();
                 break;
             }
+            return true;
         } catch (AnalysisConditionsNotMetException e) {
             JOptionPane.showMessageDialog(null, "An error was encountered:\n" + e.getMessage()
                     + "\nRevise settings and try to run the analysis again.", "Settings Error", JOptionPane.ERROR_MESSAGE);
+            return false;
         }
     }
 }

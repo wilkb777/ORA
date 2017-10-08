@@ -260,14 +260,9 @@ public class LrpSettingsPanel extends JPanel {
         });
 
         runAnalysisButton.addActionListener(evt -> {
-            AnalysisUtils.runAnalysis(analysisSettings.getCurrentAnalysisMode());
-            switch (analysisSettings.getCurrentAnalysisMode()) {
-                case PREFORMATTED:
-                    break;
-                case MULTI_LRP_FREE_FORM:
-                    disableRunAnalysisButton();
-                    runAnalysisButton.setText(runAnalysisButtonText);
-                    break;
+            boolean analysisRunning = AnalysisUtils.runAnalysis(analysisSettings.getCurrentAnalysisMode());
+            if (analysisRunning){
+                disableRunAnalysisButton();
             }
         });
 

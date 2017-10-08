@@ -109,7 +109,7 @@ public class OctSettingsPanel extends JPanel {
         componentsList.add(scalePanel);
 
         scalePanel = new JPanel();
-        l = new JLabel("X Scale ");
+        l = new JLabel("X Scale");
         scalePanel.add(l);
         octXScaleField.setColumns(6);
         l.setLabelFor(octXScaleField);
@@ -117,7 +117,7 @@ public class OctSettingsPanel extends JPanel {
         labelsList.add(scalePanel);
 
         scalePanel = new JPanel();
-        l = new JLabel("Y Scale ");
+        l = new JLabel("Y Scale");
         scalePanel.add(l);
         octYScaleField.setColumns(6);
         l.setLabelFor(octYScaleField);

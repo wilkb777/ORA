@@ -7,6 +7,7 @@ package com.bwc.ora.views;
 
 import com.bwc.ora.models.Lrp;
 import com.bwc.ora.models.RetinalBand;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Arrays;
@@ -15,13 +16,13 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
+
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.annotations.XYPointerAnnotation;
 import org.jfree.chart.entity.XYItemEntity;
 import org.jfree.ui.TextAnchor;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public class LabelPopupMenu extends JPopupMenu {
@@ -47,7 +48,7 @@ public class LabelPopupMenu extends JPopupMenu {
             JMenuItem nonItem = new JMenuItem("Remove Label");
             nonItem.addActionListener(e -> {
                 removeAnnotation();
-                lrp.setAnnotations(getAnnotations());
+                lrp.setAnnotations(LrpDisplayFrame.getInstance().getAnnotations());
             });
             add(nonItem);
         }
@@ -72,7 +73,7 @@ public class LabelPopupMenu extends JPopupMenu {
                             removeAnnotation();
                         }
                         chartPanel.getChart().getXYPlot().addAnnotation(pointer);
-                        lrp.setAnnotations(getAnnotations());
+                        lrp.setAnnotations(LrpDisplayFrame.getInstance().getAnnotations());
                     });
                     return l;
                 })
@@ -107,13 +108,4 @@ public class LabelPopupMenu extends JPopupMenu {
         return hasAnnotationAlready;
     }
 
-    private List<XYPointerAnnotation> getAnnotations() {
-        List<XYPointerAnnotation> annotations = (List<XYPointerAnnotation>) chartPanel.getChart()
-                .getXYPlot()
-                .getAnnotations()
-                .stream()
-                .filter(a -> a instanceof XYPointerAnnotation)
-                .collect(Collectors.toList());
-        return annotations;
-    }
 }

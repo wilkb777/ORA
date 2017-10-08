@@ -22,6 +22,7 @@ import java.awt.geom.Rectangle2D;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -115,6 +116,7 @@ public class LrpDisplayFrame extends JFrame {
 
             @Override
             public void contentsChanged(ListDataEvent e) {
+                clearAnnotations();
                 updateSeries(lrps.getSelectedValue().getAllSeriesData());
             }
         });
@@ -303,5 +305,24 @@ public class LrpDisplayFrame extends JFrame {
             }
 
         };
+    }
+
+    public List<XYPointerAnnotation> getAnnotations() {
+        List<XYPointerAnnotation> annotations = (List<XYPointerAnnotation>) chartPanel.getChart()
+                .getXYPlot()
+                .getAnnotations()
+                .stream()
+                .filter(a -> a instanceof XYPointerAnnotation)
+                .collect(Collectors.toList());
+        return annotations;
+    }
+
+    public void clearAnnotations(){
+        for (Object annotation : chartPanel.getChart().getXYPlot().getAnnotations()) {
+            if (annotation instanceof XYPointerAnnotation) {
+                XYPointerAnnotation pointer = (XYPointerAnnotation) annotation;
+                chartPanel.getChart().getXYPlot().removeAnnotation(pointer);
+            }
+        }
     }
 }
