@@ -38,20 +38,14 @@ public class OraUtils {
 
     public static final ActionListener testAnalysisActionListener = evt -> {
         try {
-            //read in image and ready for analysis
-            OraUtils.loadOctFromTiffFile(new File(OraUtils.class.getClassLoader().getResource("KS_10238_OS_L_7_90_05_529disp_reg_fr1-25_AL21p35.tif").toURI()),
-                    Oct.getInstance());
-        } catch (Exception ex) {
-            try {
-                File tmpOct = File.createTempFile("test_oct_", ".tif");
-                FileUtils.copyInputStreamToFile(OraUtils.class.getClassLoader().getResourceAsStream("KS_10238_OS_L_7_90_05_529disp_reg_fr1-25_AL21p35.tif"),
-                        tmpOct);
-                OraUtils.loadOctFromTiffFile(tmpOct, Oct.getInstance());
-            } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Image loading failed,"
-                        + " reason: " + ex.getMessage(), "Loading error!", JOptionPane.ERROR_MESSAGE
-                );
-            }
+            File tmpOct = File.createTempFile("test_oct_", ".tif");
+            FileUtils.copyInputStreamToFile(OraUtils.class.getClassLoader().getResourceAsStream("test.tif"),
+                    tmpOct);
+            OraUtils.loadOctFromTiffFile(tmpOct, Oct.getInstance());
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Image loading failed,"
+                    + " reason: " + e.getMessage(), "Loading error!", JOptionPane.ERROR_MESSAGE
+            );
         }
         Collections.getInstance().resetCollectionsForNewAnalysis();
         ModelsCollection.getInstance().resetSettingsToDefault();

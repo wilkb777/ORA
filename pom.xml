@@ -4,7 +4,6 @@
     <groupId>com.bwc</groupId>
     <artifactId>OCT_Reflectivity_Analytics</artifactId>
     <version>1.0.0</version>
-    <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>com.yuvimasory</groupId>
@@ -97,6 +96,8 @@
                             <mainClass>com.bwc.ora.Ora</mainClass>
                         </manifest>
                     </archive>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <finalName>ORA-${project.version}</finalName>
                 </configuration>
                 <executions>
                     <execution>
