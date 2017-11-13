@@ -10,6 +10,7 @@ import com.bwc.ora.collections.LrpCollection;
 import com.bwc.ora.collections.OctDrawnPointCollection;
 import com.bwc.ora.models.*;
 import com.bwc.ora.collections.ModelsCollection;
+import com.bwc.ora.models.exception.LRPBoundaryViolationException;
 import com.bwc.ora.views.render.HighlightXYRenderer;
 
 import java.awt.BorderLayout;
@@ -23,9 +24,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
-import javax.swing.JFrame;
-import javax.swing.JMenuItem;
-import javax.swing.JPopupMenu;
+import javax.swing.*;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 import javax.swing.event.ListSelectionEvent;
@@ -85,7 +84,25 @@ public class LrpDisplayFrame extends JFrame {
         //add listener to check for updates to lrp selection to change lrp
         lrpSettings.addPropertyChangeListener(e -> {
             if (lrps.getSelectedIndex() > -1) {
-                updateSeries(lrps.getSelectedValue().getAllSeriesData());
+                if (e.getPropertyName().equals(LrpSettings.PROP_LRP_WIDTH)) {
+                    Lrp newLrp;
+                    try {
+                        newLrp = new Lrp(
+                                Collections.getInstance().getLrpCollection().getSelectedValue().getName(),
+                                Collections.getInstance().getLrpCollection().getSelectedValue().getLrpCenterXPosition(),
+                                Collections.getInstance().getLrpCollection().getSelectedValue().getLrpCenterYPosition(),
+                                ModelsCollection.getInstance().getLrpSettings().getLrpWidth(),
+                                ModelsCollection.getInstance().getLrpSettings().getLrpHeight(),
+                                Collections.getInstance().getLrpCollection().getSelectedValue().getType());
+                    } catch (LRPBoundaryViolationException e1) {
+                        JOptionPane.showMessageDialog(null, e1.getMessage() + " Try again.", "LRP generation error", JOptionPane.ERROR_MESSAGE);
+                        lrpSettings.setLrpWidth((int) e.getOldValue());
+                        return;
+                    }
+                    Collections.getInstance().getLrpCollection().setLrp(newLrp, Collections.getInstance().getLrpCollection().getSelectedIndex());
+                } else {
+                    updateSeries(lrps.getSelectedValue().getAllSeriesData());
+                }
             }
         });
 
@@ -109,10 +126,12 @@ public class LrpDisplayFrame extends JFrame {
         //add listener to see if the LRP display needs updating when a selection on oct changes
         lrps.addListDataChangeListener(new ListDataListener() {
             @Override
-            public void intervalAdded(ListDataEvent e) {}
+            public void intervalAdded(ListDataEvent e) {
+            }
 
             @Override
-            public void intervalRemoved(ListDataEvent e) {}
+            public void intervalRemoved(ListDataEvent e) {
+            }
 
             @Override
             public void contentsChanged(ListDataEvent e) {
@@ -309,15 +328,15 @@ public class LrpDisplayFrame extends JFrame {
 
     public List<XYPointerAnnotation> getAnnotations() {
         List<XYPointerAnnotation> annotations = (List<XYPointerAnnotation>) chartPanel.getChart()
-                .getXYPlot()
-                .getAnnotations()
-                .stream()
-                .filter(a -> a instanceof XYPointerAnnotation)
-                .collect(Collectors.toList());
+                                                                                      .getXYPlot()
+                                                                                      .getAnnotations()
+                                                                                      .stream()
+                                                                                      .filter(a -> a instanceof XYPointerAnnotation)
+                                                                                      .collect(Collectors.toList());
         return annotations;
     }
 
-    public void clearAnnotations(){
+    public void clearAnnotations() {
         for (Object annotation : chartPanel.getChart().getXYPlot().getAnnotations()) {
             if (annotation instanceof XYPointerAnnotation) {
                 XYPointerAnnotation pointer = (XYPointerAnnotation) annotation;
