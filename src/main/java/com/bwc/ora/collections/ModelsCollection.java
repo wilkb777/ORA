@@ -16,6 +16,7 @@ public class ModelsCollection {
     private final OctSettings octSettings = new OctSettings();
     private final DisplaySettings displaySettings = new DisplaySettings();
     private transient final ScaleBar scaleBar = new ScaleBar("scale_bars", 100);
+    private transient final OctWindowSelector octWindowSelector = new OctWindowSelector();
     private final AnalysisSettings analysisSettings = new AnalysisSettings();
 
     private ModelsCollection() {
@@ -44,6 +45,10 @@ public class ModelsCollection {
 
     public ScaleBar getScaleBar() {
         return scaleBar;
+    }
+
+    public OctWindowSelector getOctWindowSelector() {
+        return octWindowSelector;
     }
 
     public AnalysisSettings getAnalysisSettings() {

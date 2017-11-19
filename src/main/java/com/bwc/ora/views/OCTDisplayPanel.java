@@ -57,6 +57,7 @@ public class OCTDisplayPanel extends JLabel {
         dispSettings.addPropertyChangeListener(evt -> {
             switch (evt.getPropertyName()) {
             case DisplaySettings.PROP_DISPLAY_SCALE_BARS_ON_OCT:
+            case DisplaySettings.PROP_DISPLAY_SELECTOR_WINDOW:
             case DisplaySettings.PROP_SCALE_BAR_EDGE_BUFFER_WIDTH:
                 updateDisplay(true, new ChangeEvent(evt));
             default:

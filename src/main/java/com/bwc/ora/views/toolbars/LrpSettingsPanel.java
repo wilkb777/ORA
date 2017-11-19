@@ -237,31 +237,29 @@ public class LrpSettingsPanel extends JPanel {
         analysisSettings.addPropertyChangeListener(evt -> {
             if (AnalysisSettings.PROP_CURRENT_ANALYSIS_MODE.equals(evt.getPropertyName())) {
                 switch (analysisSettings.getCurrentAnalysisMode()) {
-                    case PREFORMATTED:
-                        enableNumberLRPInput();
-                        enableAnchorLrpButton();
-                        enableLRPSeperationDistanceInput();
-                        disableRunAnalysisButton();
-                        runAnalysisButton.setText(runAnalysisButtonText);
-                        break;
-                    case MULTI_LRP_FREE_FORM:
-                        enableNumberLRPInput();
-                        disableAnchorLrpButton();
-                        disableLRPSeperationDistanceInput();
-                        enableRunAnalysisButton();
-                        runAnalysisButton.setText(runAnalysisButtonText);
-                        break;
+                case PREFORMATTED:
+                    enableNumberLRPInput();
+                    enableAnchorLrpButton();
+                    enableLRPSeperationDistanceInput();
+                    disableRunAnalysisButton();
+                    runAnalysisButton.setText(runAnalysisButtonText);
+                    break;
+                case MULTI_LRP_FREE_FORM:
+                    enableNumberLRPInput();
+                    disableAnchorLrpButton();
+                    disableLRPSeperationDistanceInput();
+                    enableRunAnalysisButton();
+                    runAnalysisButton.setText(runAnalysisButtonText);
+                    break;
                 }
             }
         });
 
-        anchorLrpButton.addActionListener(evt -> {
-            OraUtils.generateAnchorLrp(false, runAnalysisButton);
-        });
+        anchorLrpButton.addActionListener(evt -> OraUtils.generateAnchorLrp(false, runAnalysisButton));
 
         runAnalysisButton.addActionListener(evt -> {
             boolean analysisRunning = AnalysisUtils.runAnalysis(analysisSettings.getCurrentAnalysisMode());
-            if (analysisRunning){
+            if (analysisRunning) {
                 disableRunAnalysisButton();
             }
         });

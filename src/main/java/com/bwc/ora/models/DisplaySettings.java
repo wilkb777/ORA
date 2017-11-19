@@ -25,6 +25,9 @@ public class DisplaySettings {
     public static final String PROP_DISPLAY_SCALE_BARS_ON_OCT = "displayScaleBarsOnOct";
     private int scaleBarEdgeBufferWidth = 20;
     public static final String PROP_SCALE_BAR_EDGE_BUFFER_WIDTH = "scaleBarEdgeBufferWidth";
+    private boolean displaySelectorWindow = false;
+    public static final String PROP_DISPLAY_SELECTOR_WINDOW = "displaySelectorWindow";
+
 
     public void resetToDefaultSettings() {
         DisplaySettings ds = new DisplaySettings();
@@ -33,6 +36,7 @@ public class DisplaySettings {
         setShowLrpPeaks(ds.showLrpPeaks);
         setDisplayScaleBarsOnOct(ds.displayScaleBarsOnOct);
         setScaleBarEdgeBufferWidth(ds.scaleBarEdgeBufferWidth);
+        setDisplaySelectorWindow(false);
     }
 
     public void loadSettings(DisplaySettings newDisplaySettings) {
@@ -41,6 +45,16 @@ public class DisplaySettings {
         setShowLrpPeaks(newDisplaySettings.showLrpPeaks);
         setDisplayScaleBarsOnOct(newDisplaySettings.displayScaleBarsOnOct);
         setScaleBarEdgeBufferWidth(newDisplaySettings.scaleBarEdgeBufferWidth);
+    }
+
+    public boolean isDisplaySelectorWindow() {
+        return displaySelectorWindow;
+    }
+
+    public void setDisplaySelectorWindow(boolean displaySelectorWindow) {
+        boolean oldDisplaySelectorWindow = this.displayScaleBarsOnOct;
+        this.displaySelectorWindow = displaySelectorWindow;
+        propertyChangeSupport.firePropertyChange(PROP_DISPLAY_SELECTOR_WINDOW, oldDisplaySelectorWindow, displaySelectorWindow);
     }
 
     /**

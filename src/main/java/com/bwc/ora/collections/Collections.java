@@ -50,7 +50,7 @@ public class Collections {
                 .of(
                         lrpCollection.streamSelected(),
                         octDrawnPointCollection.stream(),
-                        Stream.of(modelsCollection.getScaleBar()))
+                        Stream.of(modelsCollection.getScaleBar(), modelsCollection.getOctWindowSelector()))
                 .flatMap(stream -> stream);
     }
 
