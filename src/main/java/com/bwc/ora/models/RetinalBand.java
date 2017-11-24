@@ -6,10 +6,9 @@
 package com.bwc.ora.models;
 
 /**
- *
  * @author Brandon M. Wilk {@literal <}wilkb777@gmail.com{@literal >}
  */
 public enum RetinalBand {
 
-    RNFL, GCL, IPL, OPL, ELM, EZ, IZ, RPE, BrM;
+    ILM, RNFL, GCL, IPL, OPL, ELM, EZ, IZ, RPE, BrM
 }

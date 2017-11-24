@@ -115,18 +115,23 @@ public class Oct {
         return transformedOct;
     }
 
-    public BufferedImage updateTransformedOct(){
+    public BufferedImage updateTransformedOct() {
         if (logOctImage == null) {
             return null;
         }
+        transformedOct = manualTransformOct(settings.isDisplayLogOct(),
+                settings.getActiveOperations().toArray(new FilterOperation[] {}));
+        return transformedOct;
+    }
+
+    public BufferedImage manualTransformOct(boolean log, FilterOperation... filters) {
         //grab the approriate OCT to transform and make a deep copy
-        BufferedImage octCopy = settings.isDisplayLogOct() ? ImageUtils.deepCopy(logOctImage) : ImageUtils.deepCopy(linearOctImage);
+        BufferedImage octCopy = log ? ImageUtils.deepCopy(logOctImage) : ImageUtils.deepCopy(linearOctImage);
         //apply image filter operations
-        for (FilterOperation op : settings.getActiveOperations()) {
+        for (FilterOperation op : filters) {
             octCopy = op.performOperation(octCopy);
         }
-        transformedOct = octCopy;
-        return transformedOct;
+        return octCopy;
     }
 
     /**
@@ -186,7 +191,8 @@ public class Oct {
         int r = (rgb >> 16) & 0xFF;
         int g = (rgb >> 8) & 0xFF;
         int b = (rgb & 0xFF);
-        int ret = (rgb & 0xFF000000) | (((int) Math.exp((double) r / logScale)) << 16) | (((int) Math.exp((double) g / logScale)) << 8) | ((int) Math.exp((double) b / logScale));
+        int ret = (rgb & 0xFF000000) | (((int) Math.exp((double) r / logScale)) << 16) | (((int) Math.exp((double) g / logScale)) << 8) | ((int) Math.exp(
+                (double) b / logScale));
         return ret;
     }
 

@@ -84,7 +84,7 @@ public class Lrp extends Rectangle implements OCTOverlay {
         });
     }
 
-    private void setSmoothingAlpha(int smoothingFactor) {
+    public void setSmoothingAlpha(int smoothingFactor) {
         smoothingAlpha = 1D - (smoothingFactor * LrpSettings.LRP_SMOOTHING_FACTOR_MULTIPLIER);
     }
 
