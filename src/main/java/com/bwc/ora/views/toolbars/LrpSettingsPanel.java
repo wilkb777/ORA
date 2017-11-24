@@ -255,7 +255,23 @@ public class LrpSettingsPanel extends JPanel {
             }
         });
 
-        anchorLrpButton.addActionListener(evt -> OraUtils.generateAnchorLrp(false, runAnalysisButton));
+        anchorLrpButton.addActionListener(evt -> {
+                    int option = JOptionPane.showOptionDialog(null, "Anchor method to use?",
+                            "Anchoring", JOptionPane.YES_NO_OPTION,
+                            JOptionPane.QUESTION_MESSAGE, null,
+                            new Object[] { "Manually Anchor", "Assisted Fovea Finding" }, "Manually Anchor");
+                    switch (option) {
+                    case JOptionPane.NO_OPTION:
+                        OraUtils.generateAnchorLrp(true, runAnalysisButton);
+                        break;
+                    case JOptionPane.YES_OPTION:
+                        OraUtils.generateAnchorLrp(false, runAnalysisButton);
+                        break;
+                    default:
+                        break;
+                    }
+                }
+        );
 
         runAnalysisButton.addActionListener(evt -> {
             boolean analysisRunning = AnalysisUtils.runAnalysis(analysisSettings.getCurrentAnalysisMode());

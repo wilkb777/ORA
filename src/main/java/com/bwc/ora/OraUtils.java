@@ -146,39 +146,52 @@ public class OraUtils {
         OCTDisplayPanel lrpPanel = OCTDisplayPanel.getInstance();
         LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
         DisplaySettings displaySettings = ModelsCollection.getInstance().getDisplaySettings();
-        JOptionPane.showMessageDialog(null,
-                "Click on the OCT where the anchor LRP should go.\n"
-                        + "Use the arrow keys to move the LRP.\n"
-                        + "If any setting are adjusted while in this mode\n"
-                        + "you'll have to click the mouse on the OCT to regain\n"
-                        + "the ability to move the LRP with the arrow keys.", "Click anchor point", JOptionPane.INFORMATION_MESSAGE);
+
         if (assisted) {
+            JOptionPane.showMessageDialog(null,
+                    "Click and drag a window on the OCT which\n"
+                            + "contains the foveal pit, some of the vitrious,\n"
+                            + "and some of the Bruch's membrane and choroid.\n"
+                            + "ORA will the place a LRP at what it believes is\n"
+                            + "the center of the foveal pit.\n"
+                            + "\n"
+                            + "Use the arrow keys to move the LRP if desired after placement.\n"
+                            + "If any setting are adjusted while in this mode\n"
+                            + "you'll have to click the mouse on the OCT to regain\n"
+                            + "the ability to move the LRP with the arrow keys.", "Draw foveal pit window", JOptionPane.INFORMATION_MESSAGE);
+
+            //allow the user to select region on screen where fovea should be found
             OctWindowSelector octWindowSelector = ModelsCollection.getInstance().getOctWindowSelector();
 
             MouseInputAdapter selectorMouseListener = new MouseInputAdapter() {
-                Point clickPoint = null;
+                Point firstPoint = null;
+                Point secondPoint = null;
 
-                @Override public void mousePressed(MouseEvent e) {
-                    if ((clickPoint = lrpPanel.convertPanelPointToOctPoint(e.getPoint())) != null) {
+                @Override
+                public void mousePressed(MouseEvent e) {
+                    if ((firstPoint = lrpPanel.convertPanelPointToOctPoint(e.getPoint())) != null) {
                         octWindowSelector.setDisplay(true);
                         displaySettings.setDisplaySelectorWindow(true);
                     }
                 }
 
-                @Override public void mouseReleased(MouseEvent e) {
+                @Override
+                public void mouseReleased(MouseEvent e) {
+                    secondPoint = lrpPanel.convertPanelPointToOctPoint(e.getPoint());
                     octWindowSelector.setDisplay(false);
                     displaySettings.setDisplaySelectorWindow(false);
                     lrpPanel.removeMouseListener(this);
                     lrpPanel.removeMouseMotionListener(this);
                 }
 
-                @Override public void mouseDragged(MouseEvent e) {
+                @Override
+                public void mouseDragged(MouseEvent e) {
                     Point dragPoint;
                     if ((dragPoint = lrpPanel.convertPanelPointToOctPoint(e.getPoint())) != null) {
-                        int minX = Math.min(clickPoint.x, dragPoint.x);
-                        int minY = Math.min(clickPoint.y, dragPoint.y);
-                        int width = Math.max(clickPoint.x, dragPoint.x) - minX;
-                        int height = Math.max(clickPoint.y, dragPoint.y) - minY;
+                        int minX = Math.min(firstPoint.x, dragPoint.x);
+                        int minY = Math.min(firstPoint.y, dragPoint.y);
+                        int width = Math.max(firstPoint.x, dragPoint.x) - minX;
+                        int height = Math.max(firstPoint.y, dragPoint.y) - minY;
                         octWindowSelector.setRect(minX, minY, width, height);
                         displaySettings.setDisplaySelectorWindow(false);
                         displaySettings.setDisplaySelectorWindow(true);
@@ -189,6 +202,12 @@ public class OraUtils {
             lrpPanel.addMouseListener(selectorMouseListener);
             lrpPanel.addMouseMotionListener(selectorMouseListener);
         } else {
+            JOptionPane.showMessageDialog(null,
+                    "Click on the OCT where the anchor LRP should go.\n"
+                            + "Use the arrow keys to move the LRP.\n"
+                            + "If any setting are adjusted while in this mode\n"
+                            + "you'll have to click the mouse on the OCT to regain\n"
+                            + "the ability to move the LRP with the arrow keys.", "Click anchor point", JOptionPane.INFORMATION_MESSAGE);
             //listen for the location on the screen where the user clicks, create LRP at location
             lrpPanel.addMouseListener(new MouseInputAdapter() {
 
