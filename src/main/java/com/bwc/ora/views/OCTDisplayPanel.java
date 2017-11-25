@@ -5,12 +5,9 @@
  */
 package com.bwc.ora.views;
 
-import com.bwc.ora.collections.Collections;
-import com.bwc.ora.collections.LrpCollection;
-import com.bwc.ora.collections.OctDrawnPointCollection;
+import com.bwc.ora.collections.*;
 import com.bwc.ora.ip.ImageUtils;
 import com.bwc.ora.models.*;
-import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.models.exception.LRPBoundaryViolationException;
 import com.bwc.ora.util.ChangeSupport;
 import ij.ImagePlus;
@@ -39,6 +36,7 @@ public class OCTDisplayPanel extends JLabel {
     private final OctSettings octSettings = ModelsCollection.getInstance().getOctSettings();
     private LrpCollection lrps = Collections.getInstance().getLrpCollection();
     private OctDrawnPointCollection drawnPointCollection = Collections.getInstance().getOctDrawnPointCollection();
+    private OctDrawnLinesCollection octDrawnLinesCollection = Collections.getInstance().getOctDrawnLineCollection();
     private final LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
     private final Collections collections = Collections.getInstance();
     private BufferedImage cachedOct = null;
@@ -93,6 +91,12 @@ public class OCTDisplayPanel extends JLabel {
 
         //add listener to check to see if Drawn Points have changed
         drawnPointCollection.addCollectionEventListener(e -> {
+            updateDisplay(true, new ChangeEvent(e));
+        });
+
+        //add listener to check to see if Drawn Points have changed
+        octDrawnLinesCollection.addCollectionEventListener(e -> {
+            System.out.println("Line added!");
             updateDisplay(true, new ChangeEvent(e));
         });
 

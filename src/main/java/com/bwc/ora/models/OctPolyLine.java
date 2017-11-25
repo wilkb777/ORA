@@ -10,7 +10,7 @@ public class OctPolyLine extends LinkedList<Point> implements OCTOverlay{
 
     private final String name;
     private final int zvalue;
-    private boolean disp = false;
+    private boolean disp = true;
 
     public OctPolyLine(String name, int zvalue) {
         this.name = name;
@@ -32,7 +32,7 @@ public class OctPolyLine extends LinkedList<Point> implements OCTOverlay{
     }
 
     @Override public int getZValue() {
-        return 11000;
+        return zvalue;
     }
 
     @Override public boolean display() {

@@ -9,6 +9,7 @@ import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.LrpCollection;
 import com.bwc.ora.io.ExportWriter;
 import com.bwc.ora.io.TiffReader;
+import com.bwc.ora.ip.segmentation.ILMsegmenter;
 import com.bwc.ora.models.*;
 import com.bwc.ora.collections.ModelsCollection;
 import com.bwc.ora.models.exception.LRPBoundaryViolationException;
@@ -182,6 +183,7 @@ public class OraUtils {
                     displaySettings.setDisplaySelectorWindow(false);
                     lrpPanel.removeMouseListener(this);
                     lrpPanel.removeMouseMotionListener(this);
+                    Collections.getInstance().getOctDrawnLineCollection().add(ILMsegmenter.segmentILM(firstPoint, secondPoint));
                 }
 
                 @Override
