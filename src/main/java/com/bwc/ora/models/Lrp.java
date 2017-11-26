@@ -418,4 +418,15 @@ public class Lrp extends Rectangle implements OCTOverlay {
     public int getLrpCenterYPosition() {
         return lrpCenterYPosition;
     }
+
+    @Override public String toString() {
+        return "Lrp{" +
+                "title='" + title + '\'' +
+                ", lrpCenterXPosition=" + lrpCenterXPosition +
+                ", lrpCenterYPosition=" + lrpCenterYPosition +
+                ", smoothingAlpha=" + smoothingAlpha +
+                ", width=" + width +
+                ", height=" + height +
+                '}';
+    }
 }
