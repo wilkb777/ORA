@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.io.*;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -170,6 +171,7 @@ public class OraUtils {
 
                 @Override
                 public void mousePressed(MouseEvent e) {
+                    Collections.getInstance().getOctDrawnLineCollection().clear();
                     if ((firstPoint = lrpPanel.convertPanelPointToOctPoint(e.getPoint())) != null) {
                         octWindowSelector.setDisplay(true);
                         displaySettings.setDisplaySelectorWindow(true);
@@ -183,7 +185,35 @@ public class OraUtils {
                     displaySettings.setDisplaySelectorWindow(false);
                     lrpPanel.removeMouseListener(this);
                     lrpPanel.removeMouseMotionListener(this);
-                    Collections.getInstance().getOctDrawnLineCollection().add(ILMsegmenter.segmentILM(firstPoint, secondPoint));
+                    OctPolyLine ilm = ILMsegmenter.segmentILM(firstPoint, secondPoint);
+                    Collections.getInstance().getOctDrawnLineCollection().add(ilm);
+                    //use ILM segmented line to find local minima and place LRP
+                    Point maxYPoint = ilm.stream()
+                                         .max(Comparator.comparingInt(p -> p.y))
+                                         .orElse(ilm.get(0));
+                    int fovealCenterX = (int) Math.round(ilm.stream()
+                                                            .filter(p -> p.y == maxYPoint.y)
+                                                            .mapToInt(p -> p.x)
+                                                            .average()
+                                                            .getAsDouble());
+
+                    Lrp newLrp;
+                    try {
+                        newLrp = new Lrp("Fovea",
+                                fovealCenterX,
+                                Oct.getInstance().getImageHeight() / 2,
+                                lrpSettings.getLrpWidth(),
+                                lrpSettings.getLrpHeight(),
+                                LrpType.FOVEAL);
+                        lrpCollection.setLrps(Arrays.asList(newLrp));
+                        lrpPanel.removeMouseListener(this);
+                        if (buttonToEnable != null) {
+                            buttonToEnable.setEnabled(true);
+                        }
+                    } catch (LRPBoundaryViolationException e1) {
+                        JOptionPane.showMessageDialog(null, e1.getMessage() + " Try again.", "LRP generation error", JOptionPane.ERROR_MESSAGE);
+                        return;
+                    }
                 }
 
                 @Override

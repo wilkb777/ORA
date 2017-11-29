@@ -74,5 +74,6 @@ public class Collections {
         viewsCollection.setOctSettingsAsSelectedTab();
         lrpCollection.clearLrps();
         octDrawnPointCollection.clear();
+        octDrawnLineCollection.clear();
     }
 }

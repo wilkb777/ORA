@@ -6,7 +6,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.LinkedList;
 
-public class OctPolyLine extends LinkedList<Point> implements OCTOverlay{
+public class OctPolyLine extends LinkedList<Point> implements OCTOverlay {
 
     private final String name;
     private final int zvalue;
@@ -42,4 +42,6 @@ public class OctPolyLine extends LinkedList<Point> implements OCTOverlay{
     @Override public void setDisplay(boolean display) {
         disp = display;
     }
+
+
 }

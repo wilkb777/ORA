@@ -208,14 +208,6 @@ public class Lrp extends Rectangle implements OCTOverlay {
         return lrpMaxPoints;
     }
 
-    public static XYSeries findMaxAndMins(XYSeries lrpSeries, String title) {
-        XYSeries lrpMaxPoints = new XYSeries("");
-        ((List<XYDataItem>) lrpSeries.getItems()).forEach(p -> {
-            lrpMaxPoints.add(p.getXValue(), Math.abs(p.getYValue()));
-        });
-        return findMaximums(lrpMaxPoints, title);
-    }
-
     public List<XYSeries> getFWHMForLRPPeaks(XYSeries lrpPeaks, XYSeries lrpSeries) {
         LinkedList<XYSeries> seriesList = new LinkedList<>();
         List<XYDataItem> pointList = (List<XYDataItem>) lrpSeries.getItems();
