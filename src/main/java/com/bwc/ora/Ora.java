@@ -71,7 +71,7 @@ public class Ora extends JFrame {
         this.setMinimumSize(new Dimension(300, 50));
         Image appicon = new ImageIcon(getClass().getResource("/logo.png")).getImage();
         setIconImage(appicon);
-        if (System.getProperty("os.name").contains("OS X")){
+        if (System.getProperty("os.name").contains("OS X")) {
             Application application = Application.getApplication();
             application.setDockIconImage(appicon);
         }
@@ -114,7 +114,14 @@ public class Ora extends JFrame {
         disp.addMouseMotionListener(distanceLabel);
         distanceLabel.setMouseMovedEventHandler(e -> {
             Point octPoint = disp.convertPanelPointToOctPoint(e.getPoint());
-            distanceLabel.setText(octPoint == null ? "N/A" : "N/A");
+            Lrp fovealLrp = Collections.getInstance().getLrpCollection().getFovealLrp();
+            double xscale = ModelsCollection.getInstance().getOctSettings().getxScale();
+            if (octPoint != null && fovealLrp != null && xscale > 0D) {
+                int micronsInX = (int) Math.round(xscale * (octPoint.x - fovealLrp.getLrpCenterXPosition()));
+                distanceLabel.setText(micronsInX + "\u00B5m");
+            } else {
+                distanceLabel.setText("N/A");
+            }
         });
         infoPanel.add(distanceToFoveaPanel);
         infoPanel.add(Box.createHorizontalStrut(5));
@@ -170,7 +177,7 @@ public class Ora extends JFrame {
         add(Box.createVerticalGlue());
 
         //add settings tab pane
-        JTabbedPane settingsTabPane = new JTabbedPane(JTabbedPane.LEFT);
+        JTabbedPane settingsTabPane = new JTabbedPane(JTabbedPane.BOTTOM);
         settingsTabPane.setFont(settingsTabPane.getFont().deriveFont(13F));
 
         //add tool bars

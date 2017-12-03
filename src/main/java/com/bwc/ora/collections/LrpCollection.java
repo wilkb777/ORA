@@ -155,7 +155,7 @@ public class LrpCollection extends JList<Lrp> {
             }
 
             //Set the icon and text.
-            setText(value.getName());
+            setText(" ["+value.getName()+"] ");
             return this;
         }
 
