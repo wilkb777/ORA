@@ -1,16 +1,13 @@
 package com.bwc.ora.ip.segmentation;
 
-import com.bwc.ora.collections.Collections;
 import com.bwc.ora.ip.Blur;
 import com.bwc.ora.ip.ContrastAdjust;
 import com.bwc.ora.ip.NoiseReduction;
 import com.bwc.ora.models.*;
 import org.jfree.data.xy.XYDataItem;
-import uk.me.berndporr.iirj.Butterworth;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -43,12 +40,14 @@ public class ILMsegmenter {
 
         int lrpCenterYPosition = Math.min(windowCorner.y, otherWindowCorner.y) + (Math.abs(windowCorner.y - otherWindowCorner.y) / 2);
         OctPolyLine octPolyLine = new OctPolyLine("ILM segment", 10000);
-        IntStream.rangeClosed(Math.min(windowCorner.x, otherWindowCorner.x), Math.max(windowCorner.x, otherWindowCorner.x))
+        int startingX = Math.max(3, Math.min(windowCorner.x, otherWindowCorner.x));
+        int endingX = Math.min(transformedOct.getWidth() - 4, Math.max(windowCorner.x, otherWindowCorner.x));
+        IntStream.rangeClosed(startingX, endingX)
                  .mapToObj(lrpCenterXPosition -> new Lrp("data " + lrpCenterXPosition,
                          lrpCenterXPosition,
                          lrpCenterYPosition,
                          5,
-                         Math.abs(windowCorner.y - otherWindowCorner.y),
+                         Math.abs(windowCorner.y - otherWindowCorner.y) - 2,
                          LrpType.PERIPHERAL,
                          transformedOct))
                  .peek(lrp -> lrp.setSmoothingAlpha(45))

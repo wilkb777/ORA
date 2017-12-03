@@ -14,7 +14,8 @@ public class SettingsMenu extends JMenu {
     private JCheckBoxMenuItem displayScaleBarsCheckBox = new JCheckBoxMenuItem("Display Scale Bars", true);
     private JCheckBoxMenuItem displayFileNameCheckBox = new JCheckBoxMenuItem("Display OCT File Name", true);
     private JCheckBoxMenuItem displayLrpPeaksCheckBox = new JCheckBoxMenuItem("Display LRP Peaks", true);
-    private JCheckBoxMenuItem showFwhmCheckBox = new JCheckBoxMenuItem("Display FWHM on LRP", false);
+    private JCheckBoxMenuItem displayFwhmCheckBox = new JCheckBoxMenuItem("Display FWHM on LRP", false);
+    private JCheckBoxMenuItem displayLinesOnOctCheckBox = new JCheckBoxMenuItem("Display Lines on OCT", true);
     private JMenuItem loadAnalysisSettingsMenuItem = new JMenuItem("Load Analysis Settings");
     private JMenuItem saveAnalysisSettingsMenuItem = new JMenuItem("Save Analysis Settings");
 
@@ -32,7 +33,8 @@ public class SettingsMenu extends JMenu {
         add(displayFileNameCheckBox);
         add(displayScaleBarsCheckBox);
         add(displayLrpPeaksCheckBox);
-        add(showFwhmCheckBox);
+        add(displayFwhmCheckBox);
+        add(displayLinesOnOctCheckBox);
         addSeparator();
         add(saveAnalysisSettingsMenuItem);
         add(loadAnalysisSettingsMenuItem);
@@ -73,11 +75,19 @@ public class SettingsMenu extends JMenu {
             }
         });
 
-        showFwhmCheckBox.setSelected(settings.isShowFwhmOnLrp());
-        showFwhmCheckBox.addItemListener(evt -> settings.setShowFwhmOnLrp(showFwhmCheckBox.isSelected()));
+        displayFwhmCheckBox.setSelected(settings.isShowFwhmOnLrp());
+        displayFwhmCheckBox.addItemListener(evt -> settings.setShowFwhmOnLrp(displayFwhmCheckBox.isSelected()));
         settings.addPropertyChangeListener(evt -> {
             if (DisplaySettings.PROP_SHOW_FWHM_ON_LRP.equals(evt.getPropertyName())) {
-                showFwhmCheckBox.setSelected(settings.isShowFwhmOnLrp());
+                displayFwhmCheckBox.setSelected(settings.isShowFwhmOnLrp());
+            }
+        });
+
+        displayLinesOnOctCheckBox.setSelected(settings.isDisplayLinesOnOct());
+        displayLinesOnOctCheckBox.addItemListener(evt -> settings.setDisplayLinesOnOct(displayLinesOnOctCheckBox.isSelected()));
+        settings.addPropertyChangeListener(evt -> {
+            if (DisplaySettings.PROP_SHOW_LINES_ON_OCT.equals(evt.getPropertyName())) {
+                displayLinesOnOctCheckBox.setSelected(settings.isDisplayLinesOnOct());
             }
         });
     }

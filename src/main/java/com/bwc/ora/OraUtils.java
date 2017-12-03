@@ -145,7 +145,7 @@ public class OraUtils {
      *                 fovea
      */
     public static void generateAnchorLrp(boolean assisted, JButton buttonToEnable) {
-        OCTDisplayPanel lrpPanel = OCTDisplayPanel.getInstance();
+        OCTDisplayPanel octDisplayPanel = OCTDisplayPanel.getInstance();
         LrpSettings lrpSettings = ModelsCollection.getInstance().getLrpSettings();
         DisplaySettings displaySettings = ModelsCollection.getInstance().getDisplaySettings();
 
@@ -168,11 +168,13 @@ public class OraUtils {
             MouseInputAdapter selectorMouseListener = new MouseInputAdapter() {
                 Point firstPoint = null;
                 Point secondPoint = null;
+                Point lastWindowPoint = null;
 
                 @Override
                 public void mousePressed(MouseEvent e) {
                     Collections.getInstance().getOctDrawnLineCollection().clear();
-                    if ((firstPoint = lrpPanel.convertPanelPointToOctPoint(e.getPoint())) != null) {
+                    Collections.getInstance().getLrpCollection().clearLrps();
+                    if ((firstPoint = octDisplayPanel.convertPanelPointToOctPoint(e.getPoint())) != null) {
                         octWindowSelector.setDisplay(true);
                         displaySettings.setDisplaySelectorWindow(true);
                     }
@@ -180,12 +182,12 @@ public class OraUtils {
 
                 @Override
                 public void mouseReleased(MouseEvent e) {
-                    secondPoint = lrpPanel.convertPanelPointToOctPoint(e.getPoint());
+                    secondPoint = octDisplayPanel.convertPanelPointToOctPoint(e.getPoint());
                     octWindowSelector.setDisplay(false);
                     displaySettings.setDisplaySelectorWindow(false);
-                    lrpPanel.removeMouseListener(this);
-                    lrpPanel.removeMouseMotionListener(this);
-                    OctPolyLine ilm = ILMsegmenter.segmentILM(firstPoint, secondPoint);
+                    octDisplayPanel.removeMouseListener(this);
+                    octDisplayPanel.removeMouseMotionListener(this);
+                    OctPolyLine ilm = ILMsegmenter.segmentILM(firstPoint, secondPoint == null ? lastWindowPoint : secondPoint);
                     Collections.getInstance().getOctDrawnLineCollection().add(ilm);
                     //use ILM segmented line to find local minima and place LRP
                     Point maxYPoint = ilm.stream()
@@ -206,7 +208,7 @@ public class OraUtils {
                                 lrpSettings.getLrpHeight(),
                                 LrpType.FOVEAL);
                         lrpCollection.setLrps(Arrays.asList(newLrp));
-                        lrpPanel.removeMouseListener(this);
+                        octDisplayPanel.removeMouseListener(this);
                         if (buttonToEnable != null) {
                             buttonToEnable.setEnabled(true);
                         }
@@ -219,7 +221,8 @@ public class OraUtils {
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     Point dragPoint;
-                    if ((dragPoint = lrpPanel.convertPanelPointToOctPoint(e.getPoint())) != null) {
+                    if ((dragPoint = octDisplayPanel.convertPanelPointToOctPoint(e.getPoint())) != null) {
+                        lastWindowPoint = dragPoint;
                         int minX = Math.min(firstPoint.x, dragPoint.x);
                         int minY = Math.min(firstPoint.y, dragPoint.y);
                         int width = Math.max(firstPoint.x, dragPoint.x) - minX;
@@ -231,8 +234,8 @@ public class OraUtils {
                 }
             };
 
-            lrpPanel.addMouseListener(selectorMouseListener);
-            lrpPanel.addMouseMotionListener(selectorMouseListener);
+            octDisplayPanel.addMouseListener(selectorMouseListener);
+            octDisplayPanel.addMouseMotionListener(selectorMouseListener);
         } else {
             JOptionPane.showMessageDialog(null,
                     "Click on the OCT where the anchor LRP should go.\n"
@@ -241,12 +244,12 @@ public class OraUtils {
                             + "you'll have to click the mouse on the OCT to regain\n"
                             + "the ability to move the LRP with the arrow keys.", "Click anchor point", JOptionPane.INFORMATION_MESSAGE);
             //listen for the location on the screen where the user clicks, create LRP at location
-            lrpPanel.addMouseListener(new MouseInputAdapter() {
+            octDisplayPanel.addMouseListener(new MouseInputAdapter() {
 
                 @Override
                 public void mouseClicked(MouseEvent e) {
                     Point clickPoint;
-                    if ((clickPoint = lrpPanel.convertPanelPointToOctPoint(e.getPoint())) != null) {
+                    if ((clickPoint = octDisplayPanel.convertPanelPointToOctPoint(e.getPoint())) != null) {
                         Lrp newLrp;
                         try {
                             newLrp = new Lrp("Fovea",
@@ -256,7 +259,7 @@ public class OraUtils {
                                     lrpSettings.getLrpHeight(),
                                     LrpType.FOVEAL);
                             lrpCollection.setLrps(Arrays.asList(newLrp));
-                            lrpPanel.removeMouseListener(this);
+                            octDisplayPanel.removeMouseListener(this);
                             if (buttonToEnable != null) {
                                 buttonToEnable.setEnabled(true);
                             }

@@ -11,7 +11,7 @@ public class FileMenu extends JMenu {
 
     private JMenuItem newAnalysis = new JMenuItem();
     private JMenuItem testAnalysis = new JMenuItem();
-    private JMenuItem open = new JMenuItem();
+//    private JMenuItem open = new JMenuItem();
     private JMenuItem export = new JMenuItem();
 //    private JMenuItem save = new JMenuItem();
     private JMenuItem exit = new JMenuItem();
@@ -35,9 +35,9 @@ public class FileMenu extends JMenu {
         testAnalysis.setText("Test Analysis");
         add(testAnalysis);
 
-        open.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
-        open.setText("Open Analysis");
-        add(open);
+//        open.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+//        open.setText("Open Analysis");
+//        add(open);
 
         export.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_E, java.awt.event.InputEvent.CTRL_MASK));
         export.setText("Export Analysis Results");

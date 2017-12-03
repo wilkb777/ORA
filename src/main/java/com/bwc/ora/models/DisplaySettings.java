@@ -22,6 +22,8 @@ public class DisplaySettings {
     private boolean showFwhmOnLrp = false;
     public static final String PROP_SHOW_FWHM_ON_LRP = "showFwhmOnLrp";
     private boolean displayScaleBarsOnOct = true;
+    public static final String PROP_SHOW_LINES_ON_OCT = "showLinesOnOct";
+    private boolean displayLinesOnOct = true;
     public static final String PROP_DISPLAY_SCALE_BARS_ON_OCT = "displayScaleBarsOnOct";
     private int scaleBarEdgeBufferWidth = 20;
     public static final String PROP_SCALE_BAR_EDGE_BUFFER_WIDTH = "scaleBarEdgeBufferWidth";
@@ -95,6 +97,16 @@ public class DisplaySettings {
         boolean oldShowFwhmOnLrp = this.showFwhmOnLrp;
         this.showFwhmOnLrp = showFwhmOnLrp;
         propertyChangeSupport.firePropertyChange(PROP_SHOW_FWHM_ON_LRP, oldShowFwhmOnLrp, showFwhmOnLrp);
+    }
+
+    public boolean isDisplayLinesOnOct() {
+        return displayLinesOnOct;
+    }
+
+    public void setDisplayLinesOnOct(boolean displayLinesOnOct) {
+        boolean oldDisplayLinesOnOct = this.displayLinesOnOct;
+        this.displayLinesOnOct = displayLinesOnOct;
+        propertyChangeSupport.firePropertyChange(PROP_SHOW_LINES_ON_OCT, oldDisplayLinesOnOct, displayLinesOnOct);
     }
 
     /**

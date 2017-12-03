@@ -22,6 +22,9 @@ public class OctPolyLine extends LinkedList<Point> implements OCTOverlay {
     }
 
     @Override public void drawOverlay(BufferedImage baseImg) {
+        if (!disp) {
+            return;
+        }
         Graphics2D graphics = baseImg.createGraphics();
         graphics.setColor(Color.MAGENTA);
         graphics.drawPolyline(
@@ -42,6 +45,5 @@ public class OctPolyLine extends LinkedList<Point> implements OCTOverlay {
     @Override public void setDisplay(boolean display) {
         disp = display;
     }
-
 
 }
