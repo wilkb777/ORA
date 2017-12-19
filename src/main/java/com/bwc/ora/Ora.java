@@ -21,6 +21,7 @@ import com.bwc.ora.views.toolbars.AnalysisPanel;
 import com.bwc.ora.views.toolbars.ToolbarUtilities;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -157,15 +158,28 @@ public class Ora extends JFrame {
         JPanel tmpPanel = new JPanel(new GridBagLayout());
         tmpPanel.add(disp);
 
+        //make display window scrollable for large OCTs
         JScrollPane scrollPane = new JScrollPane(tmpPanel);
+        AbstractAction nullArrowAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            }
+        };
+        //prevent arrow keys from doing anything in scroll pane
+        scrollPane.getActionMap().put("unitScrollDown", nullArrowAction);
+        scrollPane.getActionMap().put("unitScrollUp", nullArrowAction);
+        scrollPane.getActionMap().put("unitScrollRight", nullArrowAction);
+        scrollPane.getActionMap().put("unitScrollLeft", nullArrowAction);
+
+        //resize display when new OCT is loaded
         disp.addChangeListener((ChangeEvent e) -> {
             GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
             if (e.getSource() instanceof PropertyChangeEvent
                     && ((PropertyChangeEvent) e.getSource()).getPropertyName().equals(Oct.PROP_LOG_OCT)) {
                 int width = Oct.getInstance().getImageWidth() < 0.95D * (double) gd.getDisplayMode().getWidth() ?
                             Oct.getInstance().getImageWidth() : (int) (0.95D * gd.getDisplayMode().getWidth());
-                int height = Oct.getInstance().getImageHeight() < 0.70D * (double) gd.getDisplayMode().getHeight() ?
-                             Oct.getInstance().getImageHeight() : (int) (0.70D * gd.getDisplayMode().getHeight());
+                int height = Oct.getInstance().getImageHeight() < 0.50D * (double) gd.getDisplayMode().getHeight() ?
+                             Oct.getInstance().getImageHeight() : (int) (0.50D * gd.getDisplayMode().getHeight());
                 scrollPane.setPreferredSize(new Dimension(width + 50, height + 50));
                 pack();
             } else {
