@@ -33,9 +33,9 @@ public class ILMsegmenter {
          */
         BufferedImage transformedOct = Oct.getInstance().manualTransformOct(
                 true,
-                new Blur(2.25),
                 new ContrastAdjust(),
-                new NoiseReduction()
+                new NoiseReduction(),
+                new Blur(2.25)
         );
 
         int lrpCenterYPosition = Math.min(windowCorner.y, otherWindowCorner.y) + (Math.abs(windowCorner.y - otherWindowCorner.y) / 2);

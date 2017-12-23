@@ -2,18 +2,23 @@ package com.bwc.ora.views.menus;
 
 import com.bwc.ora.collections.Collections;
 import com.bwc.ora.collections.ModelsCollection;
+import com.bwc.ora.ip.segmentation.PeakSegmentor;
 import com.bwc.ora.models.*;
+import com.bwc.ora.views.OctDrawnPoint;
 import com.bwc.ora.views.dialog.ORADialogs;
 
 import javax.swing.*;
+import java.awt.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Brandon on 1/16/2017.
  */
 public class AnalysisPresetsMenu extends JMenu {
     private JRadioButtonMenuItem freeformCheckBox = new JRadioButtonMenuItem(AnalysisMode.MULTI_LRP_FREE_FORM.getModeText(), false);
-    private JRadioButtonMenuItem preformattedCheckBox = new JRadioButtonMenuItem(
-            AnalysisMode.PREFORMATTED.getModeText(), true);
+    private JRadioButtonMenuItem preformattedCheckBox = new JRadioButtonMenuItem(AnalysisMode.PREFORMATTED.getModeText(), true);
+    private JMenuItem segButton = new JMenuItem("Seg");
     private AnalysisSettings analysisSettings = ModelsCollection.getInstance().getAnalysisSettings();
     private ButtonGroup buttonGroup = new ButtonGroup();
 
@@ -25,6 +30,7 @@ public class AnalysisPresetsMenu extends JMenu {
     private void init() {
         add(preformattedCheckBox);
         add(freeformCheckBox);
+        add(segButton);
 
         buttonGroup.add(preformattedCheckBox);
         buttonGroup.add(freeformCheckBox);
@@ -36,14 +42,14 @@ public class AnalysisPresetsMenu extends JMenu {
         freeformCheckBox.addActionListener(evt -> analysisSettings.setCurrentAnalysisMode(AnalysisMode.MULTI_LRP_FREE_FORM, true));
         preformattedCheckBox.addActionListener(evt -> analysisSettings.setCurrentAnalysisMode(AnalysisMode.PREFORMATTED, true));
         analysisSettings.addPropertyChangeListener(evt -> {
-            if(AnalysisSettings.PROP_RESET_TO_DEFAULT.equals(evt.getPropertyName())){
+            if (AnalysisSettings.PROP_RESET_TO_DEFAULT.equals(evt.getPropertyName())) {
                 switch (ModelsCollection.getInstance().getAnalysisSettings().getCurrentAnalysisMode()) {
-                case PREFORMATTED:
-                    preformattedCheckBox.setSelected(true);
-                    break;
-                case MULTI_LRP_FREE_FORM:
-                    freeformCheckBox.setSelected(true);
-                    break;
+                    case PREFORMATTED:
+                        preformattedCheckBox.setSelected(true);
+                        break;
+                    case MULTI_LRP_FREE_FORM:
+                        freeformCheckBox.setSelected(true);
+                        break;
                 }
             }
         });
@@ -59,15 +65,20 @@ public class AnalysisPresetsMenu extends JMenu {
                 } else {
                     analysisSettings.setCurrentAnalysisMode((AnalysisMode) evt.getOldValue(), false);
                     switch ((AnalysisMode) evt.getOldValue()) {
-                    case PREFORMATTED:
-                        preformattedCheckBox.setSelected(true);
-                        break;
-                    case MULTI_LRP_FREE_FORM:
-                        freeformCheckBox.setSelected(true);
-                        break;
+                        case PREFORMATTED:
+                            preformattedCheckBox.setSelected(true);
+                            break;
+                        case MULTI_LRP_FREE_FORM:
+                            freeformCheckBox.setSelected(true);
+                            break;
                     }
                 }
             }
+        });
+
+        segButton.addActionListener(e -> {
+            List<OctDrawnPoint> peaks = PeakSegmentor.getPeakPoints().stream().map(peak -> new OctDrawnPoint("p", peak)).collect(Collectors.toList());
+            Collections.getInstance().getOctDrawnPointCollection().addAll(peaks);
         });
     }
 }

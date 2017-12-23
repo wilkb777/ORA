@@ -9,6 +9,7 @@ import com.bwc.ora.collections.events.OctDrawnPointCollectionEvent;
 import com.bwc.ora.collections.events.OctDrawnPointCollectionEventListener;
 import com.bwc.ora.views.OctDrawnPoint;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 
 /**
@@ -34,6 +35,16 @@ public class OctDrawnPointCollection extends LinkedList<OctDrawnPoint> {
             listenerList.forEach(l -> l.handleEvent(OctDrawnPointCollectionEvent.ADDED));
         }
         return res;
+    }
+
+    @Override
+    public boolean addAll(Collection<? extends OctDrawnPoint> c) {
+        boolean res = super.addAll(c);
+        if (res) {
+            listenerList.forEach(l -> l.handleEvent(OctDrawnPointCollectionEvent.ADDED));
+        }
+        return res;
+
     }
 
     public boolean addCollectionEventListener(OctDrawnPointCollectionEventListener eventListener){

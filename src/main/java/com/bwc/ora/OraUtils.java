@@ -88,7 +88,7 @@ public class OraUtils {
     }
 
     public static File selectFile(boolean openDialog, Component parent, int selectorType, String selectDescription, String extensionDescription,
-            String... extentions) {
+                                  String... extentions) {
         File prevLocation = fc.getSelectedFile() != null ? fc.getSelectedFile().getParentFile() : null;
 
         fc = new JFileChooser(prevLocation);
@@ -191,13 +191,14 @@ public class OraUtils {
                     Collections.getInstance().getOctDrawnLineCollection().add(ilm);
                     //use ILM segmented line to find local minima and place LRP
                     Point maxYPoint = ilm.stream()
-                                         .max(Comparator.comparingInt(p -> p.y))
-                                         .orElse(ilm.get(0));
+                            .peek(System.out::println)
+                            .max(Comparator.comparingInt(p -> p.y))
+                            .orElse(ilm.get(0));
                     int fovealCenterX = (int) Math.round(ilm.stream()
-                                                            .filter(p -> p.y == maxYPoint.y)
-                                                            .mapToInt(p -> p.x)
-                                                            .average()
-                                                            .getAsDouble());
+                            .filter(p -> p.y == maxYPoint.y)
+                            .mapToInt(p -> p.x)
+                            .average()
+                            .getAsDouble());
 
                     Lrp newLrp;
                     try {
@@ -310,8 +311,8 @@ public class OraUtils {
         }
 
         boolean illegalPositionLrps = lrps.stream()
-                                          .anyMatch(lrp -> lrp.getLrpCenterXPosition() - ((lrpSettings.getLrpWidth() - 1) / 2) < 0
-                                                  || lrp.getLrpCenterXPosition() + ((lrpSettings.getLrpWidth() - 1) / 2) >= octWidth);
+                .anyMatch(lrp -> lrp.getLrpCenterXPosition() - ((lrpSettings.getLrpWidth() - 1) / 2) < 0
+                        || lrp.getLrpCenterXPosition() + ((lrpSettings.getLrpWidth() - 1) / 2) >= octWidth);
 
         if (illegalPositionLrps) {
             throw new IllegalArgumentException("Combination of LRP width, the number of LRPs and LRP " +
