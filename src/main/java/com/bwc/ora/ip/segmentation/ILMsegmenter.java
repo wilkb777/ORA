@@ -75,11 +75,13 @@ public class ILMsegmenter {
         OctPolyLine filteredLine = new OctPolyLine("filt-seg", 11111);
         filteredLine.add(octPolyLine.get(0));
         // smooth line with a lowpass filter
+        double alpha = 0.25D;
         for (int i = 1; i < octPolyLine.size(); i++) {
-            filteredLine.add(new Point(
-                    octPolyLine.get(i).x - 2,
-                    (int) Math.round(filteredLine.get(i - 1).y + 0.25D * (octPolyLine.get(i).y - filteredLine.get(i - 1).y))
-            ));
+            //y[i] := α * x[i] + (1-α) * y[i-1]
+            //y = filtered line
+            //x = input line
+            int y = (int) Math.round(alpha * octPolyLine.get(i).y + (1 - alpha) * filteredLine.get(i - 1).y);
+            filteredLine.add(new Point(octPolyLine.get(i).x, y));
         }
 
         return filteredLine;
