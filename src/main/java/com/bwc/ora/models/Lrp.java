@@ -117,14 +117,9 @@ public class Lrp extends Rectangle implements OCTOverlay {
         // Conveniently, the buffer already contains the data array
         short[] arrayUShort = buffer.getData();
 
-//        short[] whiteArray = new short[arrayUShort.length];
-//        for (int i = 0; i < arrayUShort.length; i++) {
-//            whiteArray[i] = Short.MIN_VALUE;
-//        }
-
         // Access it like:
         //int grayPixel = arrayUShort[x + y * w] & 0xffff;
-        return IntStream.range(0, height)
+        return IntStream.range(y, y + height)
                 .map(scanY ->
                         (int) Math.round(
                                 IntStream.range(x, x + width)

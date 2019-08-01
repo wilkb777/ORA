@@ -67,10 +67,7 @@ public class Oct {
     }
 
     public void setLogOctImage(BufferedImage logOctImage) {
-        //segmentation as well as some image operations can only be done on 
-        //8-bit gray scale images, ensure image is in useable format for application
         System.out.println("type:" + logOctImage.getType());
-
         if(logOctImage.getType() != BufferedImage.TYPE_USHORT_GRAY){
             throw new RuntimeException("Can't operate on a non 16-bit gray scale image");
         }

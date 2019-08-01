@@ -141,7 +141,7 @@ public class LrpSettingsPanel extends JPanel {
         l = new JLabel("LRP Smoothing ");
         labelsList.add(l);
         l.setLabelFor(lrpSmoothingFactorField);
-        componentsList.add(ToolbarUtilities.getPanelWithSliderAndTextField(lrpSmoothingFactorField, lrpSmoothingSlider));
+        componentsList.add(ToolbarUtilities.getPanelWithSliderAndTextField(lrpSmoothingFactorField, lrpSmoothingSlider, true));
 
         labelsList.add(new JLabel());
         runAnalysisButton.setEnabled(false);
