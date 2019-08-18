@@ -89,6 +89,7 @@ public class OctSettingsPanel extends JPanel {
         radioBtnPanel.add(octLinearDisplay);
         radioBtnPanel.add(Box.createHorizontalStrut(ToolbarUtilities.TOOLBAR_HORIZONTAL_STRUT_WIDTH));
         radioBtnPanel.add(octLogDisplay);
+        radioBtnPanel.setVisible(false);
         octLogLinearDisplayButtonGroup.add(octLogDisplay);
         octLogLinearDisplayButtonGroup.add(octLinearDisplay);
         l.setLabelFor(radioBtnPanel);
@@ -100,6 +101,7 @@ public class OctSettingsPanel extends JPanel {
         l.setLabelFor(octContrastAdjustCheckBox);
         scalePanel.add(octContrastAdjustCheckBox);
         labelsList.add(scalePanel);
+        scalePanel.setVisible(false);
 
         scalePanel = new JPanel();
         l = new JLabel("Noise Reduction");
@@ -107,6 +109,7 @@ public class OctSettingsPanel extends JPanel {
         l.setLabelFor(octNoiseReductionCheckBox);
         scalePanel.add(octNoiseReductionCheckBox);
         componentsList.add(scalePanel);
+        scalePanel.setVisible(false);
 
         scalePanel = new JPanel();
         l = new JLabel("X Scale");
@@ -136,19 +139,22 @@ public class OctSettingsPanel extends JPanel {
         componentsList = new ArrayList<>();
 
         l = new JLabel("Smoothing ");
+        l.setVisible(false);
         labelsList.add(l);
         l.setLabelFor(octSmoothingFactorField);
-        componentsList.add(ToolbarUtilities.getPanelWithSliderAndTextField(octSmoothingFactorField, octSmoothingFactorSlider));
+        componentsList.add(ToolbarUtilities.getPanelWithSliderAndTextField(octSmoothingFactorField, octSmoothingFactorSlider, false));
 
         l = new JLabel("Sharpen Weight ");
+        l.setVisible(false);
         labelsList.add(l);
         l.setLabelFor(octSharpenWeightField);
-        componentsList.add(ToolbarUtilities.getPanelWithSliderAndTextField(octSharpenWeightField, octSharpenWeightSlider));
+        componentsList.add(ToolbarUtilities.getPanelWithSliderAndTextField(octSharpenWeightField, octSharpenWeightSlider, false));
 
         l = new JLabel("Sharpen Radius ");
+        l.setVisible(false);
         labelsList.add(l);
         l.setLabelFor(octSharpenKernelRadiusField);
-        componentsList.add(ToolbarUtilities.getPanelWithSliderAndTextField(octSharpenKernelRadiusField, octSharpenKernelSlider));
+        componentsList.add(ToolbarUtilities.getPanelWithSliderAndTextField(octSharpenKernelRadiusField, octSharpenKernelSlider, false));
 
         //add labels and inputs to left column
         ToolbarUtilities.addLabelTextRows(labelsList, componentsList, gridbag, rightColumnPanel);

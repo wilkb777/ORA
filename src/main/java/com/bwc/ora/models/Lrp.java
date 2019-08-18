@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferUShort;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,19 +77,19 @@ public class Lrp extends Rectangle implements OCTOverlay {
         //add listener to check for updates to lrp settings to change lrp
         lrpSettings.addFirstPriorityPropertyChangeListener(e -> {
             switch (e.getPropertyName()) {
-            case LrpSettings.PROP_LRP_SMOOTHING_FACTOR:
-                setSmoothingAlpha(lrpSettings.getLrpSmoothingFactor());
-                break;
-            case LrpSettings.PROP_LRP_HEIGHT:
-                this.height = lrpSettings.getLrpHeight();
-                this.y = lrpCenterYPosition - (this.height / 2);
-                break;
-            case LrpSettings.PROP_LRP_WIDTH:
-                this.width = lrpSettings.getLrpWidth();
-                this.x = lrpCenterXPosition - ((this.width - 1) / 2);
-                break;
-            default:
-                break;
+                case LrpSettings.PROP_LRP_SMOOTHING_FACTOR:
+                    setSmoothingAlpha(lrpSettings.getLrpSmoothingFactor());
+                    break;
+                case LrpSettings.PROP_LRP_HEIGHT:
+                    this.height = lrpSettings.getLrpHeight();
+                    this.y = lrpCenterYPosition - (this.height / 2);
+                    break;
+                case LrpSettings.PROP_LRP_WIDTH:
+                    this.width = lrpSettings.getLrpWidth();
+                    this.x = lrpCenterXPosition - ((this.width - 1) / 2);
+                    break;
+                default:
+                    break;
             }
         });
     }
@@ -109,17 +110,25 @@ public class Lrp extends Rectangle implements OCTOverlay {
     private int[] getIntensityValues() {
 
         BufferedImage octToProcess = transformedOctImage == null ? oct.getTransformedOct() : transformedOctImage;
-        int[] rgbArray = octToProcess.getRGB(x, y, width, height, null, 0, width);
 
-        return IntStream.range(0, height)
-                        .map(scanY -> (int) Math.round(
-                                Arrays.stream(rgbArray, width * scanY, width * (scanY + 1))
-                                      .map(ImageUtils::calculateGrayScaleValue)
-                                      .average()
-                                      .orElse(0)
-                                )
+        // Safe cast as img is of type TYPE_USHORT_GRAY
+        DataBufferUShort buffer = (DataBufferUShort) octToProcess.getRaster().getDataBuffer();
+
+        // Conveniently, the buffer already contains the data array
+        short[] arrayUShort = buffer.getData();
+
+        // Access it like:
+        //int grayPixel = arrayUShort[x + y * w] & 0xffff;
+        return IntStream.range(y, y + height)
+                .map(scanY ->
+                        (int) Math.round(
+                                IntStream.range(x, x + width)
+                                        .mapToDouble(scanX -> Short.toUnsignedInt(arrayUShort[scanX + (scanY * octToProcess.getWidth())]))
+                                        .average()
+                                        .orElse(0)
                         )
-                        .toArray();
+                )
+                .toArray();
     }
 
     /**
@@ -411,7 +420,8 @@ public class Lrp extends Rectangle implements OCTOverlay {
         return lrpCenterYPosition;
     }
 
-    @Override public String toString() {
+    @Override
+    public String toString() {
         return "Lrp{" +
                 "title='" + title + '\'' +
                 ", lrpCenterXPosition=" + lrpCenterXPosition +

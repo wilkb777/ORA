@@ -11,6 +11,7 @@ import org.apache.commons.io.FilenameUtils;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.io.IOException;
 
 /**
  * @author Brandon
@@ -66,20 +67,14 @@ public class Oct {
     }
 
     public void setLogOctImage(BufferedImage logOctImage) {
-        //segmentation as well as some image operations can only be done on 
-        //8-bit gray scale images, ensure image is in useable format for application
         System.out.println("type:" + logOctImage.getType());
-        ImagePlus ip = new ImagePlus("", logOctImage);
-        if (ip.getBitDepth() != 8) {
-            ImageConverter ic = new ImageConverter(ip);
-            ic.convertToGray8();
+        if(logOctImage.getType() != BufferedImage.TYPE_USHORT_GRAY){
+            throw new RuntimeException("Can't operate on a non 16-bit gray scale image");
         }
-        //store log Oct image
-        BufferedImage oldoct = this.logOctImage;
-        this.logOctImage = ip.getBufferedImage();
-        //store liner scale version of Oct
+
+        this.logOctImage = logOctImage;
         linearOctImage = getLinearOCT(this.logOctImage);
-        propertyChangeSupport.firePropertyChange(PROP_LOG_OCT, oldoct, this.logOctImage);
+        propertyChangeSupport.firePropertyChange(PROP_LOG_OCT, null, this.logOctImage);
     }
 
     public void setFileName(String fileName) {

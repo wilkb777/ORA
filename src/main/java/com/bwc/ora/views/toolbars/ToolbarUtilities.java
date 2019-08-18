@@ -60,8 +60,9 @@ public class ToolbarUtilities {
         }
     }
 
-    public static JPanel getPanelWithSliderAndTextField(JFormattedTextField textField, JSlider slider) {
+    public static JPanel getPanelWithSliderAndTextField(JFormattedTextField textField, JSlider slider, boolean visible) {
         JPanel p = new JPanel();
+        p.setVisible(visible);
         BoxLayout b = new BoxLayout(p, BoxLayout.LINE_AXIS);
         p.setLayout(b);
         p.add(Box.createHorizontalGlue());
