@@ -70,3 +70,5 @@ Lastly, run PACKR via the provided shell script. You need to specify the build v
 ```
 ./linux_build.sh 1.2.0
 ```
+
+If this worked, you can create a launcher pointing to `~/workspace/ORA/ORA.app/ORA-1.2.0` using the icon `~/workspace/ORA/logo.png.icns`.
