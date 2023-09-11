@@ -1,7 +1,7 @@
 #!/bin/bash
 mvn clean install
 java -jar ${PACKR} \
-     --platform linux \
+     --platform linux64 \
      --jdk ${ORA_TARGET_JRE} \
      --executable ORA-$1 \
      --classpath target/ORA-$1.jar \
